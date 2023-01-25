@@ -1,8 +1,8 @@
 import { type SubmitErrorHandler, type SubmitHandler, useForm, type FieldErrorsImpl, Controller } from "react-hook-form"
 import { type SnippetCreateSchema, snippetSchemes } from "../server/api/schemes/schemes"
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo, useState } from "react"
-import TextInput from "./TextInput";
+import { useMemo, useState } from "react"
+import TextInput from "./common/TextInput"
 
 const selectOptions = [
     'TS',
@@ -57,6 +57,13 @@ const SnippetForm = <
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleOnValid, handleOnError)}
         >
+            <textarea
+                placeholder='Content'
+                className='h-[50vh] w-full p-3 mx-auto bg-base-200'
+                {...register('content')}
+            />
+            <p>{errors.content?.message}</p>
+
             <TextInput
                 {...register('title')}
                 placeholder='Title'
@@ -74,7 +81,11 @@ const SnippetForm = <
                 defaultValue="TS"
                 name='folderId'
                 render={({ field }) => (
-                    <select defaultValue={field.value} onChange={field.onChange}>
+                    <select
+                        className='select select-primary select-sm'
+                        defaultValue={field.value}
+                        onChange={field.onChange}
+                    >
                         {selectOptions.map((option, index) => (
                             <option key={index} value={option}>{option}</option>
                         ))}
@@ -90,6 +101,7 @@ const SnippetForm = <
                     <>
                         <input
                             type='checkbox'
+                            className='checkbox checkbox-primary'
                             checked={field.value}
                             ref={field.ref}
                             onChange={field.onChange}
@@ -102,7 +114,7 @@ const SnippetForm = <
 
             />
             <label>Password</label>
-            <input type='checkbox' checked={withPassword} onChange={() => setWithPassword(prev => !prev)} />
+            <input className='checkbox checkbox-primary' type='checkbox' checked={withPassword} onChange={() => setWithPassword(prev => !prev)} />
 
             {withPassword ?
                 <TextInput
@@ -117,13 +129,6 @@ const SnippetForm = <
             <button type='submit'>
                 Submit
             </button>
-
-            <textarea
-                placeholder='Content'
-                className='h-[50vh] w-full p-3 mx-auto bg-base-200'
-                {...register('content')}
-            />
-            <p>{errors.content?.message}</p>
         </form>
     )
 }

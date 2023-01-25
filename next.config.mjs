@@ -13,6 +13,14 @@ const config = {
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
+  },  
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
 };
 export default config;

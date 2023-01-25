@@ -6,6 +6,9 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      width: {
+        256: '64rem'
+      },
       colors: {
       },
       keyframes: {

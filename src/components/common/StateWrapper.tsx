@@ -1,4 +1,4 @@
-import LoaderSpinner from './LoadingSpinner'
+import LoaderSpinner from '../LoadingSpinner'
 
 interface StateWrapperProps<T> {
     isLoading: boolean

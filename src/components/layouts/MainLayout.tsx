@@ -1,6 +1,14 @@
 import clsx from 'clsx'
 import { signOut } from 'next-auth/react'
-import SessionStateWrapper from '../SessionStateWrapper'
+import Link from 'next/link'
+import SessionStateWrapper from '../common/SessionStateWrapper'
+
+const navConfig = {
+    links: [
+        { label: '+ Snippet', link: '/' },
+        { label: 'Snippets', link: '/snippets' },
+    ]
+} as const
 
 const MainLayout: React.FC<{
     children: JSX.Element | JSX.Element[]
@@ -14,8 +22,19 @@ const MainLayout: React.FC<{
         return (
             <>
 
-                <header className={clsx('flex items-center justify-between pt-4 pb-2 sm:py-4', useContainer ? 'container mx-auto' : 'px-4 sm:px-8')}>
-                    <div>Logo</div>
+                <header className={clsx('z-40 fixed top-0 left-0 bg-base-200 h-16 right-0 flex items-center justify-between pt-4 pb-2 sm:py-4 px-4 sm:px-8')}>
+                    <div>
+                        <Link href='/'>
+                            Logo
+                        </Link>
+                    </div>
+                    <div className='flex gap-3'>
+                        {navConfig.links.map((item, index) => (
+                            <Link key={index} href={item.link}>
+                                {item.label}
+                            </Link>
+                        ))}
+                    </div>
                     <div className='flex gap-5'>
                         <SessionStateWrapper
                             Guest={(signIn) => <button onClick={signIn}>Sign in</button>}
@@ -31,12 +50,12 @@ const MainLayout: React.FC<{
                     </div>
                 </header>
 
-                <main className={clsx(useContainer && "container mx-auto")}>
+                <main className={clsx(useContainer && "container mx-auto min-h-screen py-24")}>
                     {children}
                 </main>
 
 
-                <footer></footer>
+                <footer className='h-64'></footer>
             </>
         )
     }

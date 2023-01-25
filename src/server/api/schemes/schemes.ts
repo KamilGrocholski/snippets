@@ -5,9 +5,36 @@ import {
     userBase
 } from "./base";
 
+export const SNIPPETS_FILTER = {
+    time: ['All time', 'Last year', 'Last month', 'Last week', 'Last day'] as const,
+    language: ['TypeScript', 'JavaScript', 'Rust', 'Python', 'Java'],
+}
+
 export type SnippetCreateSchema = z.input<typeof snippetSchemes.create>
+export type SnippetsFilter = z.input<typeof snippetsFilter>
+
+export const snippetsFilter = z.object({
+    time: z
+        .literal('All time')
+        .or(z.literal('Last year'))
+        .or(z.literal('Last month'))
+        .or(z.literal('Last week'))
+        .or(z.literal('Last day')),
+    language: z.string().optional(),
+    search: z.string()
+})
 
 export const snippetSchemes = {
+    infiniteSnippets: z.object({
+        filter: snippetsFilter,
+        cursor: snippetBase.id.optional(),
+        limit: z
+            .number()
+            .min(1)
+            .max(55)
+            .optional()
+            .default(25)
+    }),
     getRecentlyAdded: z.object({}),
     getOneById: z.object({
         snippetId: snippetBase.id

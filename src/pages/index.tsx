@@ -3,10 +3,11 @@ import Head from "next/head";
 
 import { api } from "../utils/api";
 import MainLayout from "../components/layouts/MainLayout";
-import StateWrapper from "../components/StateWrapper";
+import StateWrapper from "../components/common/StateWrapper";
 import SnippetLink from "../components/SnippetLink";
 import SnippetForm from "../components/SnippetForm";
 import SnippetsListing from "../components/SnippetsListing";
+import Section from "../components/common/Section";
 
 const Home: NextPage = () => {
   const getRecentlyAddedQuery = api.snippet.getRecentlyAdded.useQuery({})
@@ -32,10 +33,12 @@ const Home: NextPage = () => {
             />
           }
         /> */}
-        <SnippetForm
-          onValid={(data) => createSnippetMutation.mutate(data)}
-          onError={console.log}
-        />
+        <Section>
+          <SnippetForm
+            onValid={(data) => createSnippetMutation.mutate(data)}
+            onError={console.log}
+          />
+        </Section>
       </MainLayout>
     </>
   );

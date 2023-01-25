@@ -1,6 +1,9 @@
 import { type NextPage } from "next"
 import { useRouter } from "next/router"
-import StateWrapper from "../../components/StateWrapper"
+import MainLayout from "../../components/layouts/MainLayout"
+import Section from "../../components/common/Section"
+import StateWrapper from "../../components/common/StateWrapper"
+import UserProfileInfo from "../../components/UserProfileInfo"
 import { api } from "../../utils/api"
 
 const UserProfile: NextPage = () => {
@@ -11,22 +14,18 @@ const UserProfile: NextPage = () => {
     const getUserProfileQuery = api.user.getUserProfile.useQuery({ userId })
 
     return (
-        <>
-            <StateWrapper
-                data={getUserProfileQuery.data}
-                isLoading={getUserProfileQuery.isLoading}
-                isError={getUserProfileQuery.isError}
-                NonEmpty={(userProfile) => <>
-                    <div className='flex gap-5'>
-                        <div>{userProfile.id}</div>
-                        <div>{userProfile.role}</div>
-                        <div>{userProfile.name}</div>
-                        <div>{userProfile.email}</div>
-                    </div>
-                </>}
-            />
-        </>
+        <MainLayout useContainer={true}>
+            <Section>
+                <StateWrapper
+                    data={getUserProfileQuery.data}
+                    isLoading={getUserProfileQuery.isLoading}
+                    isError={getUserProfileQuery.isError}
+                    NonEmpty={(userProfile) => <UserProfileInfo userProfile={userProfile} />}
+                />
+            </Section>
+        </MainLayout>
     )
 }
 
 export default UserProfile
+

@@ -1,8 +1,11 @@
 import { type NextPage } from "next"
 import { useRouter } from "next/router"
+import Code from "../../components/Code"
 import MainLayout from "../../components/layouts/MainLayout"
-import StateWrapper from "../../components/StateWrapper"
+import StateWrapper from "../../components/common/StateWrapper"
+import UserProfileInfo from "../../components/UserProfileInfo"
 import { api } from "../../utils/api"
+import Section from "../../components/common/Section"
 
 const SnippetPage: NextPage = () => {
     const router = useRouter()
@@ -13,24 +16,22 @@ const SnippetPage: NextPage = () => {
 
     return (
         <MainLayout useContainer={true}>
-            <StateWrapper
-                data={snippetQuery.data}
-                isLoading={snippetQuery.isLoading}
-                isError={snippetQuery.isError}
-                NonEmpty={(snippet) => <>
-                    <div className='bg-base-200'>
-                        <div>{snippet.user.id}</div>
-                        <div>{snippet.user.name}</div>
-                    </div>
-                    <div className='flex gap-5'>
-                        <div>{snippet.id}</div>
-                        <div>{snippet.title}</div>
-                        <div>{snippet.createdAt.toString()}</div>
-                        <div>{snippet.user.name}</div>
-                        <div>{snippet.content}</div>
-                    </div>
-                </>}
-            />
+            <Section>
+                <StateWrapper
+                    data={snippetQuery.data}
+                    isLoading={snippetQuery.isLoading}
+                    isError={snippetQuery.isError}
+                    NonEmpty={(snippet) => <>
+                        <UserProfileInfo
+                            userProfile={snippet.user}
+                        />
+                        <Code
+                            language='javascript'
+                            content={snippet.content}
+                        />
+                    </>}
+                />
+            </Section>
         </MainLayout>
     )
 }

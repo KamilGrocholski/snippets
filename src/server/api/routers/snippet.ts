@@ -1,4 +1,5 @@
 import { type RouterInputs, type RouterOutputs } from "../../../utils/api";
+import { parseFromDateFilterValue } from "../../../utils/time";
 import { 
     snippetSchemes 
 } from "../schemes/schemes";
@@ -9,6 +10,56 @@ export type SnippetRouterOutputs = RouterOutputs['snippet']
 export type SnippetRouterInputs = RouterInputs['snippet']
 
 export const snippetRouter = createTRPCRouter({
+    infiniteSnippets: protectedProcedure
+        .input(snippetSchemes.infiniteSnippets)
+        .query(async ({ctx, input}) => {
+            const { cursor, limit, filter } = input
+
+            const snippets = await ctx.prisma.snippet.findMany({
+                take: limit + 1,    
+                where: {
+                    isPublic: true,
+                    createdAt: {
+                        gte: parseFromDateFilterValue(filter.time)
+                    },
+                    title: {
+                        contains: filter.search
+                    }
+                },
+                cursor: cursor ? { id: cursor } : undefined,
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    createdAt: true,
+                    content: true,
+                    user: {     
+                        select: {
+                            id: true,
+                            image: true,
+                            name: true
+                        }
+                    },
+                    _count: {
+                        select: {
+                            likes: true,
+                            comments: true,
+                        }
+                    }
+                }
+            })
+            let nextCursor: typeof cursor | undefined = undefined;
+            if (snippets.length > limit) {
+                const nextSnippet = snippets.pop()
+                nextCursor = nextSnippet?.id
+            }
+            return {
+                snippets,
+                nextCursor,
+            };
+        }),
     getRecentlyAdded: publicProcedure
         .meta({
             openapi: {
@@ -77,7 +128,15 @@ export const snippetRouter = createTRPCRouter({
                         select: {
                             id: true,
                             image: true,
-                            name: true
+                            name: true,
+                            email: true,
+                            role: true,
+                            _count: {
+                                select: {
+                                    comments: true,
+                                    snippets: true
+                                }
+                            }
                         }
                     },
                     _count: {

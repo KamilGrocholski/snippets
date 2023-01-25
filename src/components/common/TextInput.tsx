@@ -12,7 +12,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
-  sizeTotal = 'md',
+  sizeTotal = 'sm',
   variant = 'primary',
   bordered,
   label,
