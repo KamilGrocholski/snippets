@@ -6,6 +6,7 @@ import StateWrapper from "../../components/common/StateWrapper"
 import UserProfileInfo from "../../components/UserProfileInfo"
 import { api } from "../../utils/api"
 import Section from "../../components/common/Section"
+import Button from "../../components/common/Button"
 
 const SnippetPage: NextPage = () => {
     const router = useRouter()
@@ -21,13 +22,22 @@ const SnippetPage: NextPage = () => {
                     data={snippetQuery.data}
                     isLoading={snippetQuery.isLoading}
                     isError={snippetQuery.isError}
+                    Error={
+                        <div className='flex flex-col space-y-2 w-fit mx-auto'>
+                            <span>Sorry, we couldn&apos;t get the snippet.</span>
+                            <Button
+                                onClick={() => void snippetQuery.refetch()}
+                            >
+                                Try again
+                            </Button>
+                        </div>
+                    }
                     NonEmpty={(snippet) => <>
                         <UserProfileInfo
                             userProfile={snippet.user}
                         />
                         <Code
-                            language='javascript'
-                            content={snippet.content}
+                            snippet={snippet}
                         />
                     </>}
                 />

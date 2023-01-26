@@ -10,6 +10,12 @@ module.exports = {
         256: '64rem'
       },
       colors: {
+        primary: colors.pink['700'],
+        'base-100': "#333338",
+        'base-200': "#202023",
+        'base-300': "#0C0C0E",
+        'neutral': colors.zinc['900'],
+        error: colors.pink['900']
       },
       keyframes: {
         "fade-in": {
@@ -49,5 +55,10 @@ module.exports = {
       },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require("@tailwindcss/forms")({
+      strategy: 'class'
+    })
+  ],
 };

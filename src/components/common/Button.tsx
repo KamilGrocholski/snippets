@@ -1,12 +1,13 @@
 import clsx from "clsx";
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 import LoadingSpinner from "../LoadingSpinner";
+import { type Keys } from "../../types/helpers";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: keyof typeof BUTTON_VARIANT
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: Keys<typeof BUTTON_VARIANT>
     outline?: boolean
     disabled?: boolean
-    size?: keyof typeof BUTTON_SIZE
+    size?: Keys<typeof BUTTON_SIZE>
 }
 
 interface ButtonContentProps {
@@ -50,6 +51,7 @@ const Button = forwardRef<
         <button
             type='button'
             className={clsx(
+                'transition-all duration-100 ease-in-out',
                 BUTTON_SIZE[size],
                 BUTTON_VARIANT[variant],
                 disabled && 'pointer-events-none opacity-50',
@@ -70,13 +72,13 @@ Button.displayName = 'Button'
 export default Button
 
 const BUTTON_VARIANT = {
-    primary: 'text-white border-pink-700 bg-pink-600 hover:bg-pink-700 hover:border-pink-800 shadow-sm',
-    'primary-inverted': 'text-pink-600 border-transparent bg-white hover:bg-pink-50 shadow-sm',
-    ghost: '',
+    primary: 'text-white bg-primary hover:bg-primary/80 shadow-sm active:scale-95 active:shadow-lg',
+    'primary-reversed': 'text-primary bg-neutral hover:bg-primary shadow-sm hover:text-neutral',
+    ghost: 'text-white bg-transtapernt hover:bg-neutral',
 } as const
 
 const BUTTON_SIZE = {
-    xs: 'text-xs px-2.5 py-1.5 rounded',
+    xs: 'text-xs px-1.5 py-1 rounded',
     sm: 'text-sm px-3 py-2 leading-4 rounded',
     md: 'text-sm px-4 py-2 rounded',
     lg: 'text-md px-4 py-2 rounded-md'

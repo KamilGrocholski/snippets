@@ -3,7 +3,30 @@
 @tailwind utilities;    
 
 @layer base {
+    * {
+        @apply scroll-smooth
+    }
+
     body {
-        @apply bg-zinc-900 text-zinc-100
+        @apply bg-base-300 text-zinc-100
+    }
+
+    /* Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--tw-color-primary);
+    }
+
+    /* Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        @apply w-1 h-2
+    }
+
+    *::-webkit-scrollbar-track {
+        @apply bg-neutral
+    }
+
+    *::-webkit-scrollbar-thumb {
+        @apply bg-primary
     }
 }

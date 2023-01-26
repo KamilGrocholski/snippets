@@ -28,13 +28,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { type OpenApiMeta } from "trpc-openapi";
 import { z } from "zod";
 import { snippetBase } from "./schemes/base";
 
 export const t = initTRPC
   .context<typeof createTRPCContext>()
-  .meta<OpenApiMeta>()
   .create({
     transformer: superjson,
     errorFormatter({ shape }) {

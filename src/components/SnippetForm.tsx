@@ -3,11 +3,11 @@ import { type SnippetCreateSchema, snippetSchemes } from "../server/api/schemes/
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo, useState } from "react"
 import TextInput from "./common/TextInput"
-
-const selectOptions = [
-    'TS',
-    'JS'
-];
+import Button from "./common/Button"
+import CheckboxInput from "./common/CheckboxInput"
+import Select from "./common/Select"
+import { type Language, LANGUAGES } from "../utils/constants"
+import generateRandomString from "../utils/generateRandomString"
 
 const SnippetForm = <
     V extends (data: SnippetCreateSchema) => void,
@@ -30,12 +30,16 @@ const SnippetForm = <
     } = useForm<SnippetCreateSchema>({
         resolver: zodResolver(snippetSchemes.create),
         mode: 'onSubmit',
+        defaultValues: {
+            language: LANGUAGES[0]
+        },
         shouldFocusError: false
     })
 
     useMemo(() => {
         if (withPassword) {
-            setValue('password', 'eqwe123')
+            const newPassword = generateRandomString(10)
+            setValue('password', newPassword)
             return
         }
         setValue('password', undefined)
@@ -53,43 +57,37 @@ const SnippetForm = <
 
     return (
         <form
-            className='w-full'
+            className='w-full flex flex-col space-y-3'
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleOnValid, handleOnError)}
         >
             <textarea
                 placeholder='Content'
-                className='h-[50vh] w-full p-3 mx-auto bg-base-200'
+                className='h-[50vh] w-full p-3 mx-auto bg-neutral rounded-sm'
                 {...register('content')}
             />
             <p>{errors.content?.message}</p>
 
             <TextInput
-                {...register('title')}
+                label='Title'
                 placeholder='Title'
+                errorMessage={errors.title?.message}
+                {...register('title')}
             />
-            <p>{errors.title?.message}</p>
-
-            <TextInput
-                placeholder='Folder id'
-                {...register('folderId')}
-            />
-            <p>{errors.folderId?.message}</p>
 
             <Controller
                 control={control}
-                defaultValue="TS"
-                name='folderId'
+                name='language'
                 render={({ field }) => (
-                    <select
-                        className='select select-primary select-sm'
-                        defaultValue={field.value}
-                        onChange={field.onChange}
-                    >
-                        {selectOptions.map((option, index) => (
-                            <option key={index} value={option}>{option}</option>
-                        ))}
-                    </select>
+                    <Select
+                        label='Language'
+                        errorMessage={errors.language?.message}
+                        selected={field.value as Language}
+                        setSelected={field.onChange}
+                        options={LANGUAGES}
+                        extractKey={language => language}
+                        extractValue={language => language}
+                    />
                 )}
             />
 
@@ -99,36 +97,37 @@ const SnippetForm = <
                 name='isPublic'
                 render={({ field }) => (
                     <>
-                        <input
-                            type='checkbox'
-                            className='checkbox checkbox-primary'
+                        <CheckboxInput
+                            label='Public'
                             checked={field.value}
                             ref={field.ref}
                             onChange={field.onChange}
                             onBlur={field.onBlur}
                             name={field.name}
+                            errorMessage={errors.isPublic?.message}
                         />
-                        <p>{errors.isPublic?.message}</p>
                     </>
                 )}
 
             />
-            <label>Password</label>
-            <input className='checkbox checkbox-primary' type='checkbox' checked={withPassword} onChange={() => setWithPassword(prev => !prev)} />
+            <CheckboxInput
+                label='Password'
+                checked={withPassword}
+                onChange={() => setWithPassword(prev => !prev)}
+            />
 
             {withPassword ?
                 <TextInput
                     placeholder='Password'
                     sizeTotal="md"
-                    className='w-24'
                     {...register('password')}
                 /> : null
             }
             <p>{errors.password?.message}</p>
 
-            <button type='submit'>
+            <Button type='submit' size='lg'>
                 Submit
-            </button>
+            </Button>
         </form>
     )
 }

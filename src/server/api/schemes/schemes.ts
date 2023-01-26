@@ -1,14 +1,8 @@
 import { z } from 'zod'
 import { 
     snippetBase, 
-    folderBase, 
     userBase
 } from "./base";
-
-export const SNIPPETS_FILTER = {
-    time: ['All time', 'Last year', 'Last month', 'Last week', 'Last day'] as const,
-    language: ['TypeScript', 'JavaScript', 'Rust', 'Python', 'Java'],
-}
 
 export type SnippetCreateSchema = z.input<typeof snippetSchemes.create>
 export type SnippetsFilter = z.input<typeof snippetsFilter>
@@ -44,15 +38,15 @@ export const snippetSchemes = {
         content: snippetBase.content,
         isPublic: snippetBase.isPublic,
         password: snippetBase.password,
-        folderId: folderBase.id.optional()
+        language: snippetBase.language,
     }),
     update: z.object({
         snippetId: snippetBase.id,
         title: snippetBase.title,
         content: snippetBase.content,
         isPublic: snippetBase.isPublic,
+        language: snippetBase.language,
         password: snippetBase.password,
-        folderId: folderBase.id.optional(),
     }),
     delete: z.object({
         snippetId: snippetBase.id

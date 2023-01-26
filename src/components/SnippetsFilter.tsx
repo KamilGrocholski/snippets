@@ -1,25 +1,29 @@
 import React, { useState } from "react"
-import { SNIPPETS_FILTER } from "../server/api/schemes/schemes"
 import { type SnippetsFilter } from "../server/api/schemes/schemes"
+import { type Language, TIMES, LANGUAGES_FILTER, type LanguageFilter, type Times } from "../utils/constants"
 import Button from "./common/Button"
+import Select from "./common/Select"
+import TextInput from "./common/TextInput"
 
-export const initialFilterState: SnippetsFilter = {
-    time: 'All time',
-    language: 'All',
+const NO_LANGUAGE_SELECTED = 'All languages' as const
+
+export const initialFilterState = {
+    time: 'All time' as Times,
+    language: undefined as LanguageFilter,
     search: ''
 }
 
 export const useSnippetsFilter = () => {
-    const [filter, setFilter] = useState<SnippetsFilter>(initialFilterState)
+    const [filter, setFilter] = useState(initialFilterState)
 
-    const setTime = (time: SnippetsFilter['time']) => {
+    const setTime = (time: Times) => {
         setFilter(prev => ({
             ...prev,
             time
         }))
     }
 
-    const setLanguage = (language: SnippetsFilter['language']) => {
+    const setLanguage = (language: LanguageFilter) => {
         setFilter(prev => ({
             ...prev,
             language
@@ -70,44 +74,33 @@ const SnippetsFilter: React.FC<{
         }
 
         return (
-            <form className='flex gap-2 w-256 mx-auto my-2'>
-                <input
-                    type="text"
+            <form className='flex gap-2'>
+                <TextInput
                     placeholder="Search…"
-                    className="input input-sm input-bordered"
                     value={state.search}
                     onChange={e => dispatch.setSearch(e.target.value)}
                 />
+                <Select
+                    options={TIMES}
+                    extractKey={(option, index) => option + ' ' + index.toString()}
+                    extractValue={(option) => option}
+                    selected={state.time}
+                    setSelected={(option) => dispatch.setTime(option)}
+                />
+                <Select
+                    options={LANGUAGES_FILTER}
+                    extractKey={(option, index) => option ?? NO_LANGUAGE_SELECTED + ' ' + index.toString()}
+                    extractValue={(option) => option ?? NO_LANGUAGE_SELECTED}
+                    selected={state.language as Language}
+                    setSelected={(option) => dispatch.setLanguage(option)}
+                />
 
-                <select
-                    className='select select-primary select-sm'
-                    onChange={(e) => dispatch.setTime(e.target.value as SnippetsFilter['time'])}
-                    value={state.time}
-                >
-                    {SNIPPETS_FILTER.time.map((option, index) => (
-                        <option key={index}>{option}</option>
-                    ))}
-                </select>
-
-                <select
-                    className='select select-primary select-sm'
-                    onChange={(e) => dispatch.setLanguage(e.target.value)}
-                    value={state.language ?? 'Language'}
-                >
-                    <option className='font-bold border-primary border-b'>Language</option>
-                    {SNIPPETS_FILTER.language.map((option, index) => (
-                        <option key={index}>{option}</option>
-                    ))}
-                </select>
-
-                <button
+                <Button
                     type='submit'
-                    className="btn btn-sm btn-primary flex flex-row space-x-3 items-center"
                     onClick={handleSearch}
                 >
                     <span>Search</span>
-                    <span><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></span>
-                </button>
+                </Button>
                 <Button
                     onClick={handleReset}
                 >

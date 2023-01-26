@@ -1,4 +1,5 @@
 import { type RouterInputs, type RouterOutputs } from "../../../utils/api";
+import getStringLengthInBytes from "../../../utils/getStringLengthInBytes";
 import { parseFromDateFilterValue } from "../../../utils/time";
 import { 
     snippetSchemes 
@@ -24,6 +25,9 @@ export const snippetRouter = createTRPCRouter({
                     },
                     title: {
                         contains: filter.search
+                    },
+                    language: {
+                        equals: filter.language
                     }
                 },
                 cursor: cursor ? { id: cursor } : undefined,
@@ -35,6 +39,8 @@ export const snippetRouter = createTRPCRouter({
                     title: true,
                     createdAt: true,
                     content: true,
+                    language: true,
+                    size: true,
                     user: {     
                         select: {
                             id: true,
@@ -61,14 +67,6 @@ export const snippetRouter = createTRPCRouter({
             };
         }),
     getRecentlyAdded: publicProcedure
-        .meta({
-            openapi: {
-                method: 'GET',
-                path: '/snippet/getRecentlyAdded',
-                tags: ['snippet'],
-                summary: 'Get recently added snippets'
-            }
-        })
         .input(snippetSchemes.getRecentlyAdded)
         .query(({ctx, input}) => {
             const {} = input
@@ -99,15 +97,24 @@ export const snippetRouter = createTRPCRouter({
                 }
             })
         }),
+    getOnyByIdRaw: publicProcedure
+        .input(snippetSchemes.getOneById)
+        .query(({ctx, input}) => {
+            const { snippetId } = input
+
+            return ctx.prisma.snippet.findFirst({
+                where: {
+                    AND: [
+                        {id: snippetId},
+                        {isPublic: true}
+                    ]
+                },
+                select: {
+                    content: true
+                }
+            })
+        }),    
     getOneById: publicProcedure
-        .meta({
-            openapi: {
-                method: 'GET',
-                path: '/snippet/get',
-                tags: ['snippet'],
-                summary: 'Get a snippet by id'
-            }
-        })
         .input(snippetSchemes.getOneById)
         .query(({ctx, input}) => {
             const { snippetId } = input
@@ -124,6 +131,8 @@ export const snippetRouter = createTRPCRouter({
                     title: true,
                     createdAt: true,
                     content: true,
+                    language: true,
+                    size: true,
                     user: {
                         select: {
                             id: true,
@@ -148,41 +157,30 @@ export const snippetRouter = createTRPCRouter({
             })
         }),
     create: protectedProcedure
-        .meta({
-            openapi: {
-                method: 'POST',
-                path: '/snippet/create',
-                tags: ['snippet'],
-                summary: 'Create a new snippet'
-            }
-        })
         .input(snippetSchemes.create)
         .mutation(({ctx, input}) => {
-            const { title, content, folderId, isPublic } = input
+            const { title, content, language, isPublic } = input
+
+            const size = getStringLengthInBytes(content) 
 
             return ctx.prisma.snippet.create({
                 data: {
                     title,
                     content,
                     userId: ctx.session.user.id,
-                    // folderId,
-                    isPublic
+                    isPublic,
+                    language,
+                    size
                 }
             })
         }),
 
-    update: snippetOwnerProcedure
-        .meta({
-            openApi: {
-                method: 'PUT',
-                path: '/snippet/update',
-                tags: ['snippet'],
-                summary: 'Update a snippet'
-            }
-        })
+    updateById: snippetOwnerProcedure
         .input(snippetSchemes.update)
         .mutation(({ctx, input}) => {
-            const { snippetId, title, content, folderId } = input
+            const { snippetId, title, content, isPublic, language } = input
+
+            const size = getStringLengthInBytes(content)
 
             return ctx.prisma.snippet.update({
                 where: {
@@ -191,20 +189,14 @@ export const snippetRouter = createTRPCRouter({
                 data: {
                     title,
                     content,
-                    folderId
+                    language,
+                    isPublic,
+                    size
                 }
             })
         }),
     
     delete: snippetOwnerProcedure
-        .meta({
-            openApi: {
-                method: 'DELETE',
-                path: '/snippet/delete',
-                tags: ['snippet'],
-                summray: 'Delete a snippet'
-            }
-        })
         .input(snippetSchemes.delete)
         .mutation(({ctx, input}) => {
             const { snippetId } = input

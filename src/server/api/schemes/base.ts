@@ -12,8 +12,9 @@ export const snippetBase = {
     id: z.string().cuid(),
     title: z.string()
         .trim()
-        .min(1)
-        .max(55),
+        .max(55, {message: 'Title must contain at most 55 characters'})
+        .transform((title) => title.length ? title : undefined)
+        .optional(),
     content: z.string()
         .trim()  
         .max(100_000_000),
@@ -21,15 +22,8 @@ export const snippetBase = {
     password: z.string()
         .trim()
         .max(555)
-        .optional()
-}
-
-export const folderBase = {
-    id: z.string(),
-    name: z.string()    
-        .trim()
-        .min(1)
-        .max(55)
+        .optional(),
+    language: z.string()
 }
 
 export const commentBase = {

@@ -1,0 +1,1 @@
+export type Keys<T extends { [key: string]: unknown }> = keyof T

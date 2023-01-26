@@ -1,32 +1,37 @@
 import clsx from "clsx"
 import { forwardRef, type InputHTMLAttributes } from "react"
-
-type Keys<T extends { [key: string]: unknown }> = keyof T
+import { type Keys } from "../../types/helpers"
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string
   sizeTotal?: Keys<typeof SIZE>
   variant?: Keys<typeof VARIANT>
-  bordered?: boolean
   label?: string
+  labelPosition?: 'left' | 'top'
+  labelClassName?: string
+  errorMessage?: string
+  errorMessageClassName?: string
 }
 
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
-  sizeTotal = 'sm',
+  sizeTotal = 'md',
   variant = 'primary',
-  bordered,
   label,
+  labelClassName,
+  errorMessage,
+  errorMessageClassName,
   className,
   ...rest
 }, ref) => {
   return (
-    <div className='form-control'>
-      <label className='label'>{label}</label>
+    <div className={clsx(
+      'flex flex-col',
+    )}>
+      {label ? <label className={clsx(labelClassName)}>{label}</label> : null}
+      {errorMessage ? <span className={clsx('text-sm text-error', errorMessageClassName)}>{errorMessage}</span> : null}
       <input
         type='text'
         className={clsx(
-          'input input-xs w-full max-w-xs',
-          bordered && 'input-bordered',
           SIZE[sizeTotal],
           VARIANT[variant],
           className
@@ -43,19 +48,12 @@ TextInput.displayName = 'TextInput'
 export default TextInput
 
 const VARIANT = {
-  primary: 'input-primary',
-  secondary: 'input-secondary',
-  accent: 'input-accent',
-  ghost: 'input-ghost',
-  info: 'input-info',
-  success: 'input-success',
-  warning: 'input-warning',
-  error: 'input-error',
+  primary: 'text-white flex rounded-md bg-neutral px-1 shadow-sm',
 } as const
 
 const SIZE = {
-  xs: 'input-xs',
-  sm: 'input-sm',
-  md: 'input-md',
-  lg: 'input-lg'
+  xs: 'text-xs pl-2.5 py-1.5 rounded',
+  sm: 'text-sm pl-3 py-2 leading-4 rounded',
+  md: 'text-sm w-64 pl-4 py-2 rounded',
+  lg: 'text-md pl-4 py-2 rounded-md'
 } as const
