@@ -8,10 +8,18 @@ import SnippetLink from "../components/SnippetLink";
 import SnippetForm from "../components/SnippetForm";
 import SnippetsListing from "../components/SnippetsListing";
 import Section from "../components/common/Section";
+import { useRouter } from "next/dist/client/router";
 
 const Home: NextPage = () => {
-  const getRecentlyAddedQuery = api.snippet.getRecentlyAdded.useQuery({})
-  const createSnippetMutation = api.snippet.create.useMutation()
+  const utils = api.useContext()
+  const router = useRouter()
+
+  const createSnippetMutation = api.snippet.create.useMutation({
+    onSuccess: (createdSnippet) => {
+      void router.push(`/snippets/${createdSnippet.id}`)
+      void utils.snippet.infiniteSnippets.invalidate()
+    }
+  })
 
   return (
     <>

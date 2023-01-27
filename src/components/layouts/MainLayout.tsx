@@ -2,6 +2,11 @@ import clsx from 'clsx'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import SessionStateWrapper from '../common/SessionStateWrapper'
+import { Menu, Transition } from '@headlessui/react'
+import UiIcons from '../../assets/UiIcons'
+import { Fragment } from 'react'
+import Button from '../common/Button'
+import Image from 'next/image'
 
 const navConfig = {
     links: [
@@ -18,11 +23,10 @@ const MainLayout: React.FC<{
     useContainer
 }) => {
 
-
         return (
             <>
 
-                <header className={clsx('z-40 fixed top-0 left-0 bg-base-300 h-16 right-0 flex items-center justify-between pt-4 pb-2 sm:py-4 px-4 sm:px-8')}>
+                <header className={clsx('z-40 fixed top-0 left-0 bg-transparent h-fit right-0 flex items-center justify-between py-0.5 sm:py-1 px-2 sm:px-4')}>
                     <div>
                         <Link href='/'>
                             Logo
@@ -39,18 +43,20 @@ const MainLayout: React.FC<{
                         <SessionStateWrapper
                             Guest={(signIn) => <button onClick={signIn}>Sign in</button>}
                             Admin={(session) => <>
-                                <span>{session.user?.name}</span>
-                                <button onClick={() => void signOut()}>Sign out</button>
+                                <AccountMenu image={session.image} role={session.role} />
                             </>}
                             User={(session) => <>
-                                <span>{session.user?.name}</span>
-                                <button onClick={() => void signOut()}>Sign out</button>
+                                <AccountMenu image={session.image} role={session.role} />
                             </>}
                         />
                     </div>
                 </header>
 
-                <main className={clsx(useContainer && "container mx-auto min-h-screen py-24")}>
+                <main
+                    className={clsx(
+                        'py-24',
+                        useContainer && "container mx-auto min-h-screen"
+                    )}>
                     {children}
                 </main>
 
@@ -78,3 +84,86 @@ const MainLayout: React.FC<{
     }
 
 export default MainLayout
+
+const Avatar: React.FC<{ image: string, className?: string }> = ({ image, className }) => {
+    return (
+        <Image
+            src={image}
+            alt='avatar'
+            width={40}
+            height={40}
+            className={clsx(
+                'rounded-md',
+                className
+            )}
+        />
+    )
+}
+
+const AccountMenu: React.FC<{
+    image: string
+    role: string
+}> = ({
+    image,
+    role
+}) => {
+
+        return (
+            <Menu as="div" className="relative inline-block text-left">
+                <div>
+                    <Menu.Button className="">
+                        <Avatar image={image} />
+                    </Menu.Button>
+                </div>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <Menu.Items className="absolute overflow-hidden right-0 mt-2 w-48 origin-top-right rounded-md bg-neutral shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div>
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <Link
+                                        className='bg-neutral w-full hover:bg-base-100/80 py-1.5 px-3 flex items-center gap-3 justify-start text-white'
+                                        href='/me'
+                                    >
+                                        {UiIcons.user}
+                                        <span>Profile</span>
+                                    </Link>
+                                )}
+                            </Menu.Item>
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <Link
+                                        className='bg-neutral hover:bg-base-100/80 w-full py-1.5 px-3 flex items-center gap-3 justify-start text-white'
+                                        href='/settings'
+                                    >
+                                        {UiIcons.cog6Tooth}
+                                        <span>Settings</span>
+                                    </Link>
+                                )}
+                            </Menu.Item>
+                        </div>
+                        <div>
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <button
+                                        className='bg-primary hover:bg-primary/80 w-full py-1.5 px-3 flex items-center gap-3 justify-start text-neutral'
+                                        onClick={() => void signOut()}
+                                    >
+                                        {UiIcons.power}
+                                        <span>Sign out</span>
+                                    </button>
+                                )}
+                            </Menu.Item>
+                        </div>
+                    </Menu.Items>
+                </Transition>
+            </Menu>
+        )
+    }

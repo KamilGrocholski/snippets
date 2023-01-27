@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import { useRouter } from "next/router"
+import React, { useEffect, useState } from "react"
 import { type SnippetsFilter } from "../server/api/schemes/schemes"
 import { type Language, TIMES, LANGUAGES_FILTER, type LanguageFilter, type Times } from "../utils/constants"
 import Button from "./common/Button"
@@ -13,7 +14,21 @@ export const initialFilterState = {
     search: ''
 }
 
+export const useQueryFromUrl = () => {
+    const router = useRouter()
+
+    const [filter, setFilter] = useState(router.query as typeof initialFilterState)
+
+    useEffect(() => {
+        setFilter(router.query as typeof initialFilterState)
+    }, [router.query])
+
+    return filter
+}
+
 export const useSnippetsFilter = () => {
+    const router = useRouter()
+
     const [filter, setFilter] = useState(initialFilterState)
 
     const setTime = (time: Times) => {
@@ -39,6 +54,10 @@ export const useSnippetsFilter = () => {
 
     const resetFilter = () => setFilter(initialFilterState)
 
+    const pushToUrl = (path: `/${string}`) => {
+        void router.push(`${path}?time=${filter.time}&language=${filter.language ?? NO_LANGUAGE_SELECTED}&search=${filter.search}`)
+    }
+
     return {
         state: filter,
         dispatch: {
@@ -47,7 +66,8 @@ export const useSnippetsFilter = () => {
             setSearch,
             resetFilter,
         },
-        setFilter
+        setFilter,
+        pushToUrl
     }
 }
 
@@ -58,11 +78,12 @@ const SnippetsFilter: React.FC<{
     // filter,
     onSearch
 }) => {
-        const { state, dispatch } = useSnippetsFilter()
+        const { state, dispatch, pushToUrl } = useSnippetsFilter()
 
         const handleSearch = (e: React.FormEvent) => {
             e.nativeEvent.preventDefault()
             e.preventDefault()
+            pushToUrl('/snippets')
             onSearch(state)
             console.log({ state })
         }

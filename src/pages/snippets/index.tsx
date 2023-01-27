@@ -1,18 +1,22 @@
 import { type NextPage } from "next"
 import MainLayout from "../../components/layouts/MainLayout"
 import Section from "../../components/common/Section"
-import SnippetsFilter, { useSnippetsFilter } from "../../components/SnippetsFilter"
+import SnippetsFilter, { useQueryFromUrl, useSnippetsFilter } from "../../components/SnippetsFilter"
 import { api } from "../../utils/api"
 import SnippetListItem from "../../components/SnippetListItem"
 import useInfiniteScroll from "../../hooks/useInfiniteScroll"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import StateWrapper from "../../components/common/StateWrapper"
+import { useRouter } from "next/router"
 
 const SnippetsPage: NextPage = () => {
   const snippetsFilter = useSnippetsFilter()
 
+  const filter = useQueryFromUrl()
+
   const infiniteSnippets = api.snippet.infiniteSnippets.useInfiniteQuery({
-    filter: snippetsFilter.state,
+    // filter: snippetsFilter.state,
+    filter: filter,
     limit: 25
   }, {
     getNextPageParam: (lastPage) => lastPage.nextCursor

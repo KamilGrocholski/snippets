@@ -7,8 +7,6 @@ interface CheckboxInputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string
     labelClassName?: string
     sizeInput?: Keys<typeof SIZE>
-    errorMessage?: string
-    errorMessageClassName?: string
 }
 
 const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>((props, ref) => {
@@ -17,8 +15,6 @@ const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>((props, r
         sizeInput = 'md',
         label,
         labelClassName,
-        errorMessage,
-        errorMessageClassName
     } = props
 
     return (
@@ -36,7 +32,6 @@ const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>((props, r
                     ref={ref}
                 />
             </div>
-            {errorMessage ? <span className={clsx('text-sm text-error', errorMessageClassName)}>{errorMessage}</span> : null}
         </div>
     )
 })

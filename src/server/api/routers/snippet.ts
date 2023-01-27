@@ -19,6 +19,7 @@ export const snippetRouter = createTRPCRouter({
             const snippets = await ctx.prisma.snippet.findMany({
                 take: limit + 1,    
                 where: {
+                    password: null,
                     isPublic: true,
                     createdAt: {
                         gte: parseFromDateFilterValue(filter.time)
@@ -66,54 +67,18 @@ export const snippetRouter = createTRPCRouter({
                 nextCursor,
             };
         }),
-    getRecentlyAdded: publicProcedure
-        .input(snippetSchemes.getRecentlyAdded)
-        .query(({ctx, input}) => {
-            const {} = input
-
-            return ctx.prisma.snippet.findMany({
-                where: {
-                    AND: [
-                        {password: null},
-                        {isPublic: true}
-                    ]
-                },
-                select: {
-                    id: true,
-                    title: true,
-                    createdAt: true,
-                    user: {
-                        select: {
-                            id: true,
-                            image: true,
-                            name: true
-                        }
-                    },
-                    _count: {
-                        select: {
-                            likes: true
-                        }
-                    }
-                }
-            })
-        }),
-    getOnyByIdRaw: publicProcedure
+    getOnyByIdProtected: snippetOwnerProcedure
         .input(snippetSchemes.getOneById)
         .query(({ctx, input}) => {
             const { snippetId } = input
 
-            return ctx.prisma.snippet.findFirst({
+            return ctx.prisma.snippet.findUnique({
                 where: {
-                    AND: [
-                        {id: snippetId},
-                        {isPublic: true}
-                    ]
+                    id: snippetId
                 },
-                select: {
-                    content: true
-                }
+                select: mainSnippetSelect
             })
-        }),    
+        }),
     getOneById: publicProcedure
         .input(snippetSchemes.getOneById)
         .query(({ctx, input}) => {
@@ -126,7 +91,65 @@ export const snippetRouter = createTRPCRouter({
                         {isPublic: true}
                     ]
                 },
-                select: {
+                select: mainSnippetSelect
+            })
+        }),
+    create: protectedProcedure
+        .input(snippetSchemes.create)
+        .mutation(({ctx, input}) => {
+            const { title, content, language, isPublic, password } = input
+
+            const size = getStringLengthInBytes(content) 
+
+            return ctx.prisma.snippet.create({
+                data: {
+                    title,
+                    content,
+                    userId: ctx.session.user.id,
+                    isPublic,
+                    language,
+                    size,
+                    password
+                }
+            })
+        }),
+
+    updateById: snippetOwnerProcedure
+        .input(snippetSchemes.update)
+        .mutation(({ctx, input}) => {
+            const { snippetId, title, content, isPublic, language, password } = input
+
+            const size = getStringLengthInBytes(content)
+
+            return ctx.prisma.snippet.update({
+                where: {
+                    id: snippetId
+                },
+                data: {
+                    title,
+                    content,
+                    language,
+                    isPublic,
+                    size,
+                    password
+                }
+            })
+        }),
+    
+    delete: snippetOwnerProcedure
+        .input(snippetSchemes.delete)
+        .mutation(({ctx, input}) => {
+            const { snippetId } = input
+
+            return ctx.prisma.snippet.delete({
+                where: {
+                    id: snippetId
+                }
+            })
+        })
+})
+
+const mainSnippetSelect = {
                     id: true,
                     title: true,
                     createdAt: true,
@@ -153,58 +176,4 @@ export const snippetRouter = createTRPCRouter({
                             likes: true
                         }
                     }
-                }
-            })
-        }),
-    create: protectedProcedure
-        .input(snippetSchemes.create)
-        .mutation(({ctx, input}) => {
-            const { title, content, language, isPublic } = input
-
-            const size = getStringLengthInBytes(content) 
-
-            return ctx.prisma.snippet.create({
-                data: {
-                    title,
-                    content,
-                    userId: ctx.session.user.id,
-                    isPublic,
-                    language,
-                    size
-                }
-            })
-        }),
-
-    updateById: snippetOwnerProcedure
-        .input(snippetSchemes.update)
-        .mutation(({ctx, input}) => {
-            const { snippetId, title, content, isPublic, language } = input
-
-            const size = getStringLengthInBytes(content)
-
-            return ctx.prisma.snippet.update({
-                where: {
-                    id: snippetId
-                },
-                data: {
-                    title,
-                    content,
-                    language,
-                    isPublic,
-                    size
-                }
-            })
-        }),
-    
-    delete: snippetOwnerProcedure
-        .input(snippetSchemes.delete)
-        .mutation(({ctx, input}) => {
-            const { snippetId } = input
-
-            return ctx.prisma.snippet.delete({
-                where: {
-                    id: snippetId
-                }
-            })
-        })
-})
+}

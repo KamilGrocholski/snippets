@@ -1,12 +1,12 @@
 import { signIn, useSession } from "next-auth/react"
 import React from "react"
 
-type SessionState = 'Admin' | 'User'
+export type SessionState = 'Admin' | 'User'
 
 type SessionStateWrapperProps = {
     Guest: (signIn: () => void) => JSX.Element
     Loading?: React.ReactNode
-} & { [key in SessionState]: (session: NonNullable<ReturnType<typeof useSession>['data']>) => JSX.Element }
+} & { [key in SessionState]: (session: NonNullable<NonNullable<ReturnType<typeof useSession>['data']>['user']>) => JSX.Element }
 
 const SessionStateWrapper: React.FC<SessionStateWrapperProps> = ({
     Admin,
@@ -14,15 +14,15 @@ const SessionStateWrapper: React.FC<SessionStateWrapperProps> = ({
     Guest,
     Loading
 }) => {
-    const session = useSession()
+    const { data: session, status } = useSession()
 
-    if (session.status === 'loading') return <>{Loading ?? null}</>
+    if (status === 'loading') return <>{Loading ?? null}</>
 
-    if (!session?.data?.user) return Guest(() => void signIn('google'))
+    if (!session?.user) return Guest(() => void signIn('google'))
 
-    if (session.data.user?.role === 'USER') return User(session.data)
+    if (session.user?.role === 'USER') return User(session.user)
 
-    if (session.data.user?.role === 'ADMIN') return Admin(session.data)
+    if (session.user?.role === 'ADMIN') return Admin(session.user)
 
     return <div>Error</div>
 

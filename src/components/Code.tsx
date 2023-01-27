@@ -10,7 +10,7 @@ import formatBytes from '../utils/formatBytes'
 import Dot from './common/Dot'
 
 interface CodeProps {
-    snippet: NonNullable<SnippetRouterOutputs['getOneById']>
+    snippet: Extract<NonNullable<SnippetRouterOutputs['getOneById']>, { content: string }>
     className?: string
 }
 
@@ -18,7 +18,7 @@ const Code: React.FC<CodeProps> = ({
     snippet,
     className
 }) => {
-    const [, copy] = useCopyToClipboard()
+    const [currentCopyValue, copy] = useCopyToClipboard()
 
     // copy a snippet to the clipboard
     const handleCopy = async () => {
@@ -71,7 +71,7 @@ const Code: React.FC<CodeProps> = ({
                 <div className='flex gap-2 items-center'>
                     <div className='text-lg font-semibold'>{snippet.title}</div>
                     <div className='w-[1px] h-full bg-base-100'></div>
-                    <div className='capitalize'>{snippet.language}</div>
+                    <div className='capitalize text-primary'>{snippet.language}</div>
                     <div className='w-[1px] h-full bg-base-100'></div>
                     <div className=''>{formatBytes(snippet.size)}</div>
                 </div>
@@ -88,6 +88,9 @@ const Code: React.FC<CodeProps> = ({
             <SyntaxHighlighter
                 language={snippet.language}
                 showLineNumbers
+                lineNumberContainerStyle={{
+                    backgroundColor: 'hover:'
+                }}
                 lineNumberStyle={{
                     paddingRight: '8px',
                     paddingLeft: '4px',

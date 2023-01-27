@@ -104,7 +104,6 @@ const SnippetForm = <
                             onChange={field.onChange}
                             onBlur={field.onBlur}
                             name={field.name}
-                            errorMessage={errors.isPublic?.message}
                         />
                     </>
                 )}
@@ -121,9 +120,9 @@ const SnippetForm = <
                     placeholder='Password'
                     sizeTotal="md"
                     {...register('password')}
+                    errorMessage={errors.password?.message}
                 /> : null
             }
-            <p>{errors.password?.message}</p>
 
             <Button type='submit' size='lg'>
                 Submit

@@ -32,14 +32,16 @@ const SnippetPage: NextPage = () => {
                             </Button>
                         </div>
                     }
-                    NonEmpty={(snippet) => <>
-                        <UserProfileInfo
-                            userProfile={snippet.user}
-                        />
-                        <Code
-                            snippet={snippet}
-                        />
-                    </>}
+                    NonEmpty={(snippet) =>
+                        <>
+                            <UserProfileInfo
+                                userProfile={snippet.user}
+                            />
+                            <Code
+                                snippet={snippet}
+                            />
+                        </>
+                    }
                 />
             </Section>
         </MainLayout>
