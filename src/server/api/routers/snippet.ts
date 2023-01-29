@@ -11,6 +11,24 @@ export type SnippetRouterOutputs = RouterOutputs['snippet']
 export type SnippetRouterInputs = RouterInputs['snippet']
 
 export const snippetRouter = createTRPCRouter({
+    getAllByUserIdPublic: publicProcedure
+        .input(snippetSchemes.getAllByUserIdPublic)
+        .query(({ctx, input}) => {
+            const { userId } = input
+
+            return ctx.prisma.snippet.findMany({
+                where: {
+                    AND: [
+                        {userId},
+                        {isPublic: true}
+                    ]
+                },
+                orderBy: {
+                    createdAt: 'asc'
+                },
+                select: mainSnippetSelect
+            })
+        }),
     infiniteSnippets: protectedProcedure
         .input(snippetSchemes.infiniteSnippets)
         .query(async ({ctx, input}) => {
@@ -163,6 +181,9 @@ const mainSnippetSelect = {
                             name: true,
                             email: true,
                             role: true,
+                            websiteUrl: true,
+                            createdAt: true,
+                            updatedAt: true,
                             _count: {
                                 select: {
                                     comments: true,
@@ -173,7 +194,8 @@ const mainSnippetSelect = {
                     },
                     _count: {
                         select: {
-                            likes: true
+                            likes: true,
+                            comments: true
                         }
                     }
 }

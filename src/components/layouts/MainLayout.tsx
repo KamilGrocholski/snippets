@@ -4,13 +4,14 @@ import Link from 'next/link'
 import SessionStateWrapper from '../common/SessionStateWrapper'
 import { Menu, Transition } from '@headlessui/react'
 import UiIcons from '../../assets/UiIcons'
-import { Fragment } from 'react'
-import Button from '../common/Button'
+import { Fragment, useState } from 'react'
+import Button, { type ButtonContentProps, type ButtonProps } from '../common/Button'
 import Image from 'next/image'
+import Modal from '../common/Modal'
 
 const navConfig = {
     links: [
-        { label: '+ Snippet', link: '/' },
+        // { label: 'Add', link: '/' },
         { label: 'Snippets', link: '/snippets' },
     ]
 } as const
@@ -26,20 +27,32 @@ const MainLayout: React.FC<{
         return (
             <>
 
-                <header className={clsx('z-40 fixed top-0 left-0 bg-transparent h-fit right-0 flex items-center justify-between py-0.5 sm:py-1 px-2 sm:px-4')}>
+                <header className={clsx('lg:w-256 w-full mx-auto z-40 fixed top-0 left-0 bg-base-300 h-12 right-0 flex items-center justify-between py-0.5 sm:py-1 px-2 sm:px-4')}>
                     <div>
-                        <Link href='/'>
-                            Logo
+                        <Link href='/' className='text-xl font-bold'>
+                            Snippets
                         </Link>
                     </div>
-                    <div className='flex gap-3'>
-                        {navConfig.links.map((item, index) => (
-                            <Link key={index} href={item.link}>
-                                {item.label}
+                    <div className='flex gap-5 items-center'>
+                        <div className='flex gap-3 items-center'>
+                            <Link href='/'>
+                                <Button
+                                    className='font-semibold'
+                                    icon={UiIcons.plus}
+                                >
+                                    Add
+                                </Button>
                             </Link>
-                        ))}
-                    </div>
-                    <div className='flex gap-5'>
+                            {navConfig.links.map((item, index) => (
+                                <Link
+                                    key={index}
+                                    href={item.link}
+                                    className='font-semibold hover:text-primary'
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </div>
                         <SessionStateWrapper
                             Guest={(signIn) => <button onClick={signIn}>Sign in</button>}
                             Admin={(session) => <>
@@ -124,7 +137,7 @@ const AccountMenu: React.FC<{
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <Menu.Items className="absolute overflow-hidden right-0 mt-2 w-48 origin-top-right rounded-md bg-neutral shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute overflow-hidden right-0 mt-2 w-48 min-w-fit origin-top-right rounded-md bg-neutral shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div>
                             <Menu.Item>
                                 {({ active }) => (
@@ -167,3 +180,5 @@ const AccountMenu: React.FC<{
             </Menu>
         )
     }
+
+

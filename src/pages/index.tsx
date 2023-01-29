@@ -1,25 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import { api } from "../utils/api";
 import MainLayout from "../components/layouts/MainLayout";
-import StateWrapper from "../components/common/StateWrapper";
-import SnippetLink from "../components/SnippetLink";
 import SnippetForm from "../components/SnippetForm";
-import SnippetsListing from "../components/SnippetsListing";
 import Section from "../components/common/Section";
-import { useRouter } from "next/dist/client/router";
 
 const Home: NextPage = () => {
-  const utils = api.useContext()
-  const router = useRouter()
-
-  const createSnippetMutation = api.snippet.create.useMutation({
-    onSuccess: (createdSnippet) => {
-      void router.push(`/snippets/${createdSnippet.id}`)
-      void utils.snippet.infiniteSnippets.invalidate()
-    }
-  })
 
   return (
     <>
@@ -30,22 +16,8 @@ const Home: NextPage = () => {
       </Head>
 
       <MainLayout useContainer={true}>
-        {/* <StateWrapper
-          isLoading={getRecentlyAddedQuery.isLoading}
-          isError={getRecentlyAddedQuery.isError}
-          data={getRecentlyAddedQuery.data}
-          NonEmpty={(snippets) =>
-            <SnippetsListing
-              snippets={snippets}
-              renderItem={(snippet, index) => <SnippetLink key={index} {...snippet} />}
-            />
-          }
-        /> */}
         <Section>
-          <SnippetForm
-            onValid={(data) => createSnippetMutation.mutate(data)}
-            onError={console.log}
-          />
+          <SnippetForm />
         </Section>
       </MainLayout>
     </>

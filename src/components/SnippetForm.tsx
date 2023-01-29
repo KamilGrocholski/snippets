@@ -8,6 +8,8 @@ import CheckboxInput from "./common/CheckboxInput"
 import Select from "./common/Select"
 import { type Language, LANGUAGES } from "../utils/constants"
 import generateRandomString from "../utils/generateRandomString"
+import { useRouter } from "next/router"
+import { api } from "../utils/api"
 
 const SnippetForm = <
     V extends (data: SnippetCreateSchema) => void,
@@ -16,9 +18,19 @@ const SnippetForm = <
     onValid,
     onError
 }: {
-    onValid: V,
+    onValid?: V,
     onError?: E
 }) => {
+    const utils = api.useContext()
+    const router = useRouter()
+
+    const createSnippetMutation = api.snippet.create.useMutation({
+        onSuccess: (createdSnippet) => {
+            void router.push(`/snippets/${createdSnippet.id}`)
+            void utils.snippet.infiniteSnippets.invalidate()
+        }
+    })
+
     const [withPassword, setWithPassword] = useState(false)
 
     const {
@@ -47,7 +59,8 @@ const SnippetForm = <
 
     const handleOnValid: SubmitHandler<SnippetCreateSchema> = (data, e) => {
         e?.preventDefault()
-        onValid(data)
+        createSnippetMutation.mutate(data)
+        onValid && onValid(data)
     }
 
     const handleOnError: SubmitErrorHandler<SnippetCreateSchema> | undefined = (data, e) => {
@@ -61,12 +74,12 @@ const SnippetForm = <
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleOnValid, handleOnError)}
         >
+            <p>{errors.content?.message}</p>
             <textarea
                 placeholder='Content'
                 className='h-[50vh] w-full p-3 mx-auto bg-neutral rounded-sm'
                 {...register('content')}
             />
-            <p>{errors.content?.message}</p>
 
             <TextInput
                 label='Title'
@@ -124,7 +137,12 @@ const SnippetForm = <
                 /> : null
             }
 
-            <Button type='submit' size='lg'>
+            <Button
+                type='submit'
+                size='lg'
+                loading={createSnippetMutation.isLoading}
+                disabled={createSnippetMutation.isLoading || createSnippetMutation.isSuccess}
+            >
                 Submit
             </Button>
         </form>

@@ -7,6 +7,12 @@
         @apply scroll-smooth
     }
 
+    *,
+    ::before,
+    ::after {
+        @apply box-border
+    }
+
     body {
         @apply bg-base-300 text-zinc-100
     }

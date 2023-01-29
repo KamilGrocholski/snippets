@@ -4,8 +4,20 @@ export const userBase = {
     id: z.string().cuid(),
     name: z.string()
         .trim()
-        .min(5)
-        .max(55)
+        .min(5, {message: 'Name must contain at least 5 characters'})
+        .max(55, {message: 'Name must contain at most 55 characters'}),
+    websiteUrl: z.string()
+        .trim()
+        .url()
+        .or(z.string().max(0))
+        .transform(url => !url.length ? undefined : url)
+        .optional(),
+    image: z.string()
+        .trim()
+        .url()
+        .or(z.string().max(0))
+        .transform(url => !url.length ? undefined : url)
+        .optional(),
 }
 
 export const snippetBase = {
@@ -23,7 +35,7 @@ export const snippetBase = {
         .trim()
         .max(555)
         .optional(),
-    language: z.string()
+    language: z.string().trim()
 }
 
 export const commentBase = {

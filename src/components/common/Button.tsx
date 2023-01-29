@@ -10,39 +10,58 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     size?: Keys<typeof BUTTON_SIZE>
 }
 
-interface ButtonContentProps {
+export interface ButtonContentProps {
     loading?: boolean
     children?: React.ReactNode
+    icon?: React.ReactNode
+    iconPosition?: 'start' | 'end'
+    iconClassName?: string
 }
 
 const ButtonContent: React.FC<ButtonContentProps> = ({
     loading,
-    children
+    children,
+    icon,
+    iconPosition = 'start',
+    iconClassName
 }) => {
     return (
         <>
             {loading ? (
-                <span><LoadingSpinner className='h-5 w-5' /> </span>
+                <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+                    <LoadingSpinner className='h-5 w-5' />
+                </span>
             ) : null}
+            {icon && iconPosition === 'start' ?
+                <span className={clsx(
+                    'mr-2 text-neutral',
+                    iconClassName
+                )}>{icon}</span> : null}
             <span
                 className={clsx(
-                    loading && 'invisible'
+                    loading ? 'invisible' : ''
                 )}
             >
                 {children}
             </span>
+            {icon && iconPosition === 'end' ?
+                <span className={clsx(
+                    'ml-2 text-neutral',
+                    iconClassName
+                )}>{icon}</span> : null}
         </>
     )
 }
 
 const Button = forwardRef<
     HTMLButtonElement,
-    ButtonProps
+    ButtonProps & ButtonContentProps
 >((props, ref) => {
     const {
         variant = 'primary',
         size = 'md',
         disabled,
+        loading,
         className,
         ...rest
     } = props
@@ -51,7 +70,7 @@ const Button = forwardRef<
         <button
             type='button'
             className={clsx(
-                'transition-all duration-100 ease-in-out',
+                'z-0 relative transition-all duration-100 ease-in-out inline-flex items-center font-medium',
                 BUTTON_SIZE[size],
                 BUTTON_VARIANT[variant],
                 disabled && 'pointer-events-none opacity-50',
@@ -81,6 +100,7 @@ const BUTTON_SIZE = {
     xs: 'text-xs px-1.5 py-1 rounded',
     sm: 'text-sm px-3 py-2 leading-4 rounded',
     md: 'text-sm px-4 py-2 rounded',
-    lg: 'text-md px-4 py-2 rounded-md'
+    lg: 'text-md px-4 py-2 rounded-md',
+    'supa-large': 'text-2xl px-8 py-4 rounded-md w-full'
 } as const
 

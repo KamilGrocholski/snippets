@@ -8,6 +8,9 @@ import createBlobUrl from '../utils/createBlobUrl'
 import { type SnippetRouterOutputs } from '../server/api/routers/snippet'
 import formatBytes from '../utils/formatBytes'
 import Dot from './common/Dot'
+import { formatDate } from '../utils/time'
+import Modal from './common/Modal'
+import { useState } from 'react'
 
 interface CodeProps {
     snippet: Extract<NonNullable<SnippetRouterOutputs['getOneById']>, { content: string }>
@@ -18,7 +21,7 @@ const Code: React.FC<CodeProps> = ({
     snippet,
     className
 }) => {
-    const [currentCopyValue, copy] = useCopyToClipboard()
+    const [, copy] = useCopyToClipboard()
 
     // copy a snippet to the clipboard
     const handleCopy = async () => {
@@ -60,6 +63,8 @@ const Code: React.FC<CodeProps> = ({
         }
     }
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
     return (
         <div
             className={clsx(
@@ -67,22 +72,42 @@ const Code: React.FC<CodeProps> = ({
                 className
             )}
         >
+
+            <Modal
+                openState={[isMobileMenuOpen, setIsMobileMenuOpen]}
+            >
+                <div className='flex flex-col space-y-2 w-full' onClick={() => setIsMobileMenuOpen(false)} onTouchStart={() => setIsMobileMenuOpen(false)}>
+                    <MenuButtonMobile text='copy' onClick={handleCopy} />
+                    <MenuButtonMobile text='raw' onClick={handleRaw} />
+                    <MenuButtonMobile text='download' onClick={handleDownload} />
+                    <MenuButtonMobile text='link' onClick={handleCopyLink} />
+                </div>
+            </Modal>
+
             <div className='flex flex-col md:flex-row justify-between gap-1 bg-neutral px-2 py-1 rounded-t-md border-b border-base-200'>
-                <div className='flex gap-2 items-center'>
-                    <div className='text-lg font-semibold'>{snippet.title}</div>
+                <div className='flex lg:flex-row flex-col lg:gap-2 gap-1 lg:items-center items-start'>
+                    <div className='text-md font-medium'>{snippet.title}</div>
                     <div className='w-[1px] h-full bg-base-100'></div>
                     <div className='capitalize text-primary'>{snippet.language}</div>
                     <div className='w-[1px] h-full bg-base-100'></div>
                     <div className=''>{formatBytes(snippet.size)}</div>
+                    <div className='w-[1px] h-full bg-base-100'></div>
+                    <div className=''>{formatDate(snippet.createdAt)}</div>
                 </div>
-                <div className='flex gap-1 items-center'>
-                    <MenuButton text='copy' onClick={handleCopy} />
+                <Button
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className='justify-center lg:hidden flex'
+                >
+                    Menu
+                </Button>
+                <div className='lg:flex hidden gap-1 items-center'>
+                    <MenuButton onClick={handleCopy}>copy</MenuButton>
                     <Dot />
-                    <MenuButton text='raw' onClick={handleRaw} />
+                    <MenuButton onClick={handleRaw}>raw</MenuButton>
                     <Dot />
-                    <MenuButton text='download' onClick={handleDownload} />
+                    <MenuButton onClick={handleDownload}>download</MenuButton>
                     <Dot />
-                    <MenuButton text='link' onClick={handleCopyLink} />
+                    <MenuButton onClick={handleCopyLink}>link</MenuButton>
                 </div>
             </div>
             <SyntaxHighlighter
@@ -115,6 +140,28 @@ export default Code
 
 const MenuButton: React.FC<{
     onClick: () => void | Promise<void>
+    children: React.ReactNode
+}> = ({
+    onClick,
+    children
+}) => {
+        return (
+            <Button
+                variant='primary-reversed'
+                size='xs'
+                className='font-semibold'
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onClick={onClick}
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onTouchStart={onClick}
+            >
+                {children}
+            </Button>
+        )
+    }
+
+const MenuButtonMobile: React.FC<{
+    onClick: () => void | Promise<void>
     text: string
 }> = ({
     onClick,
@@ -123,7 +170,7 @@ const MenuButton: React.FC<{
         return (
             <Button
                 variant='primary-reversed'
-                size='xs'
+                size='supa-large'
                 className='font-semibold'
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onClick={onClick}

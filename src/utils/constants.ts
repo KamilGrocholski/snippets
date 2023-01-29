@@ -19,7 +19,7 @@ export const LANGUAGES = [
   "swift",
 ] as const
 
-export const LANGUAGES_FILTER = [undefined, ...LANGUAGES] as const
+export const LANGUAGES_FILTER = ['All languages', ...LANGUAGES] as const
 
 export const TIMES = [
   'All time', 

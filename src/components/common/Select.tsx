@@ -34,7 +34,7 @@ const Select = <T extends readonly (string | undefined)[] | (string | undefined)
 }: SelectProps<T>) => {
     return (
         <Listbox value={selected} onChange={setSelected}>
-            <div className="relative w-48">
+            <div className="relative w-48 z-30">
                 <Listbox.Label className='flex flex-col'>
                     <span>{label}</span>
                     <span className='text-sm text-error'>{errorMessage}</span>

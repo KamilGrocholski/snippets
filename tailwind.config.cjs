@@ -6,6 +6,12 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      // container: {
+      //   screens: {
+      //     lg: '64rem',
+      //     md: '48rem'
+      //   }
+      // },
       width: {
         256: '64rem'
       },

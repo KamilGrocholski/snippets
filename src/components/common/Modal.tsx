@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { Fragment } from "react"
 
-interface ModalProps {
+export interface ModalProps {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
     initialFocus?: React.MutableRefObject<null>
     children: React.ReactNode

@@ -25,3 +25,7 @@ export const parseFromDateFilterValue = (time: SnippetsFilter['time']) => {
     const now = Date.now()
     return new Date(now - FILTER_TIME_VALUES[time]).toISOString()
 }
+
+export const formatDate = (date: Date) => {
+    return date.toString().slice(0, 15)
+}

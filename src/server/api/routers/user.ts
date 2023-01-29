@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { type RouterOutputs, type RouterInputs } from "../../../utils/api";
 import { userSchemes } from "../schemes/schemes";
 
@@ -23,12 +22,53 @@ export const userRouter = createTRPCRouter({
                     name: true,
                     email: true,
                     role: true,
+                    websiteUrl: true,
+                    createdAt: true,
+                    updatedAt: true,
                     _count: {
                         select: {
                             comments: true,
                             snippets: true
                         }
-                    }
+                    },
+
+                }
+            })
+        }),
+
+    getMe: protectedProcedure
+        .query(({ctx}) => {
+            
+            return ctx.prisma.user.findUnique({
+                where: {
+                    id: ctx.session.user.id
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    image: true,
+                    role: true,
+                    websiteUrl: true,
+                    createdAt: true,
+                    updatedAt: true
+                }
+            }) 
+        }),
+
+    updateMe: protectedProcedure
+        .input(userSchemes.updateMe)
+        .mutation(({ctx,input}) => {
+            const { name, image, websiteUrl } = input
+
+            return ctx.prisma.user.update({
+                where: {
+                    id: ctx.session.user.id
+                },
+                data: {
+                    name,
+                    image,
+                    websiteUrl
                 }
             })
         })

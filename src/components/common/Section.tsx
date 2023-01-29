@@ -17,7 +17,7 @@ const Section = forwardRef<HTMLDivElement, SectionProps>(({
         <div
             ref={ref}
             className={clsx(
-                'w-256 max-w-full mx-auto mb-0 bg-base-300 rounded-md',
+                'w-256 max-w-full mx-auto mb-0 z-10 bg-base-300 rounded-md',
                 containerClassName
             )}
             {...props}

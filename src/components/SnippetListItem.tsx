@@ -2,6 +2,7 @@ import Link from "next/link"
 import UiIcons from "../assets/UiIcons"
 import { type SnippetRouterOutputs } from "../server/api/routers/snippet"
 import formatBytes from "../utils/formatBytes"
+import { formatDate } from "../utils/time"
 
 const SnippetListItem: React.FC<{
     snippet: SnippetRouterOutputs['infiniteSnippets']['snippets'][number]
@@ -10,29 +11,29 @@ const SnippetListItem: React.FC<{
 }) => {
         return (
             <div className='hover:bg-neutral/30'>
-                <div className='text-primary hover:text-primary/70 text-lg font-semibold'>
-                    <Link className='link link-primary' href={`/snippets/${snippet.id}`}>
+                <div className='text-primary hover:text-primary/70 lg:text-lg text-2xl font-semibold'>
+                    <Link href={`/snippets/${snippet.id}`}>
                         {snippet.title}
                     </Link>
                 </div>
-                <div className='flex gap-2'>
-                    <div className='flex gap-1 items-end text-xs capitalize'>
+                <div className='flex flex-row lg:flex-nowrap flex-wrap gap-2'>
+                    <div className='flex gap-1 items-center lg:text-xs text-lg capitalize'>
                         {UiIcons.commandLine}
                         {snippet.language}
                     </div>
-                    <div className='flex gap-1 items-end text-xs'>
+                    <div className='flex gap-1 items-center lg:text-xs text-lg'>
                         {UiIcons.document}
                         {formatBytes(snippet.size)}
                     </div>
-                    <div className='flex gap-1 items-end text-xs'>
+                    <div className='flex gap-1 items-center lg:text-xs text-lg'>
                         {UiIcons.calendar}
-                        {snippet.createdAt.toString().slice(0, 15)}
+                        {formatDate(snippet.createdAt)}
                     </div>
                     <Link
                         className='text-primary/50 hover:text-primary'
                         href={`/user/${snippet.user.id}`}
                     >
-                        <div className='flex gap-1 items-end text-xs'>
+                        <div className='flex gap-1 items-center lg:text-xs text-lg'>
                             {UiIcons.user}
                             {snippet.user.name}
                         </div>
