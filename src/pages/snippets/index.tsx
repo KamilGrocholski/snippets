@@ -10,6 +10,7 @@ import StateWrapper from "../../components/common/StateWrapper"
 import { useRouter } from "next/router"
 import Button from "../../components/common/Button"
 import { object } from "../../utils/objectThings"
+import Divider from "../../components/common/Divider"
 
 const SnippetsPage: NextPage = () => {
   const router = useRouter()
@@ -36,7 +37,7 @@ const SnippetsPage: NextPage = () => {
   return (
     <>
       <MainLayout useContainer={true}>
-        <Section containerClassName="sticky top-12">
+        <Section useBgColor={false} useSectionPadding={false} containerClassName="sticky top-12" sectionClassName="py-4">
           <SnippetsFilter />
         </Section>
         <Section>
@@ -58,7 +59,10 @@ const SnippetsPage: NextPage = () => {
               <div className='flex flex-col lg:space-y-1 space-y-5'>
                 {data.pages.map((page) => (
                   page.snippets.map((snippet, snippetIndex) => (
-                    <SnippetListItem key={snippetIndex} snippet={snippet} />
+                    <>
+                      <SnippetListItem key={snippetIndex} snippet={snippet} />
+                      <Divider />
+                    </>
                   ))
                 ))}
               </div>

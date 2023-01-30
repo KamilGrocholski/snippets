@@ -5,7 +5,7 @@ import Section from "../../components/common/Section"
 import StateWrapper from "../../components/common/StateWrapper"
 import UserProfileInfo from "../../components/UserProfileInfo"
 import { api } from "../../utils/api"
-import SnippetListItem from "../../components/SnippetListItem"
+import SnippetsTable from "../../components/SnippetsTable"
 
 const UserProfile: NextPage = () => {
     const router = useRouter()
@@ -17,7 +17,7 @@ const UserProfile: NextPage = () => {
 
     return (
         <MainLayout useContainer={true}>
-            <Section>
+            <Section containerClassName="mb-4">
                 <StateWrapper
                     data={getUserProfileQuery.data}
                     isLoading={getUserProfileQuery.isLoading}
@@ -31,11 +31,17 @@ const UserProfile: NextPage = () => {
                     isLoading={getUserSnippetsQuery.isLoading}
                     isError={getUserSnippetsQuery.isError}
                     NonEmpty={(snippets) =>
-                        <div className='flex flex-col lg:space-y-1 space-y-5'>
-                            {snippets.map((snippet, index) => (
-                                <SnippetListItem snippet={snippet} key={index} />
-                            ))}
-                        </div>
+                        <SnippetsTable snippets={snippets} />
+                        // <div className='flex flex-col lg:space-y-1 space-y-5'>
+                        //     {snippets.map((snippet, index) => (
+                        //         <SessionStateWrapper
+                        //             key={index}
+                        //             Guest={() => <SnippetListItem snippet={snippet} />}
+                        //             User={(userData) => userData.id === snippet.user.id ? <EditableSnippetListItem snippet={snippet} /> : <SnippetListItem snippet={snippet} />}
+                        //             Admin={(adminData) => adminData.id === snippet.user.id ? <EditableSnippetListItem snippet={snippet} /> : <SnippetListItem snippet={snippet} />}
+                        //         />
+                        //     ))}
+                        // </div>
                     }
                 />
             </Section>

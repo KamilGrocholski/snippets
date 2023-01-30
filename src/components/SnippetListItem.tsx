@@ -10,7 +10,7 @@ const SnippetListItem: React.FC<{
     snippet
 }) => {
         return (
-            <div className='hover:bg-neutral/30'>
+            <div className='hover:bg-base-300/50 p-2'>
                 <div className='text-primary hover:text-primary/70 lg:text-lg text-2xl font-semibold'>
                     <Link href={`/snippets/${snippet.id}`}>
                         {snippet.title}

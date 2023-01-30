@@ -36,3 +36,9 @@
         @apply bg-primary
     }
 }
+
+@layer components {
+    .hide-when-not-md {
+        @apply hidden lg:table-cell
+    }
+}

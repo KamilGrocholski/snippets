@@ -8,28 +8,23 @@ import CheckboxInput from "./common/CheckboxInput"
 import Select from "./common/Select"
 import { type Language, LANGUAGES } from "../utils/constants"
 import generateRandomString from "../utils/generateRandomString"
-import { useRouter } from "next/router"
-import { api } from "../utils/api"
 
 const SnippetForm = <
     V extends (data: SnippetCreateSchema) => void,
-    E extends (data: Partial<FieldErrorsImpl<SnippetCreateSchema>>) => void
+    E extends (data: Partial<FieldErrorsImpl<SnippetCreateSchema>>) => void,
 >({
     onValid,
-    onError
+    onError,
+    loading,
+    disabled,
+    initialData
 }: {
-    onValid?: V,
-    onError?: E
+    onValid: V,
+    onError?: E,
+    loading: boolean,
+    disabled: boolean
+    initialData?: SnippetCreateSchema
 }) => {
-    const utils = api.useContext()
-    const router = useRouter()
-
-    const createSnippetMutation = api.snippet.create.useMutation({
-        onSuccess: (createdSnippet) => {
-            void router.push(`/snippets/${createdSnippet.id}`)
-            void utils.snippet.infiniteSnippets.invalidate()
-        }
-    })
 
     const [withPassword, setWithPassword] = useState(false)
 
@@ -42,7 +37,7 @@ const SnippetForm = <
     } = useForm<SnippetCreateSchema>({
         resolver: zodResolver(snippetSchemes.create),
         mode: 'onSubmit',
-        defaultValues: {
+        defaultValues: initialData ? initialData : {
             language: LANGUAGES[0]
         },
         shouldFocusError: false
@@ -59,8 +54,7 @@ const SnippetForm = <
 
     const handleOnValid: SubmitHandler<SnippetCreateSchema> = (data, e) => {
         e?.preventDefault()
-        createSnippetMutation.mutate(data)
-        onValid && onValid(data)
+        onValid(data)
     }
 
     const handleOnError: SubmitErrorHandler<SnippetCreateSchema> | undefined = (data, e) => {
@@ -140,8 +134,9 @@ const SnippetForm = <
             <Button
                 type='submit'
                 size='lg'
-                loading={createSnippetMutation.isLoading}
-                disabled={createSnippetMutation.isLoading || createSnippetMutation.isSuccess}
+                className='w-fit'
+                loading={loading}
+                disabled={disabled}
             >
                 Submit
             </Button>

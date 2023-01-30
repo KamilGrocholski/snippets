@@ -5,26 +5,31 @@ interface SectionProps {
     children: JSX.Element | JSX.Element[]
     containerClassName?: string
     sectionClassName?: string
+    useBgColor?: boolean
+    useSectionPadding?: boolean
 }
 
 const Section = forwardRef<HTMLDivElement, SectionProps>(({
     children,
     containerClassName,
     sectionClassName,
+    useBgColor = true,
+    useSectionPadding = true,
     ...props
 }, ref) => {
     return (
         <div
             ref={ref}
             className={clsx(
-                'w-256 max-w-full mx-auto mb-0 z-10 bg-base-300 rounded-md',
+                'w-256 max-w-full mx-auto mb-0 rounded-md',
+                useBgColor && 'bg-neutral',
                 containerClassName
             )}
             {...props}
         >
             <section
                 className={clsx(
-                    'p-4',
+                    useSectionPadding && 'p-4',
                     sectionClassName
                 )}
             >

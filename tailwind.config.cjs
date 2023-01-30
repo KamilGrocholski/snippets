@@ -21,7 +21,8 @@ module.exports = {
         'base-200': "#202023",
         'base-300': "#0C0C0E",
         'neutral': colors.zinc['900'],
-        error: colors.pink['900']
+        error: colors.pink['900'],
+        danger: colors.red['800']
       },
       keyframes: {
         "fade-in": {

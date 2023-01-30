@@ -4,8 +4,20 @@ import Head from "next/head";
 import MainLayout from "../components/layouts/MainLayout";
 import SnippetForm from "../components/SnippetForm";
 import Section from "../components/common/Section";
+import { useRouter } from "next/router";
+import { api } from "../utils/api";
 
 const Home: NextPage = () => {
+
+  const utils = api.useContext()
+  const router = useRouter()
+
+  const createSnippetMutation = api.snippet.create.useMutation({
+    onSuccess: (createdSnippet) => {
+      void router.push(`/snippets/${createdSnippet.id}`)
+      void utils.snippet.infiniteSnippets.invalidate()
+    }
+  })
 
   return (
     <>
@@ -17,7 +29,11 @@ const Home: NextPage = () => {
 
       <MainLayout useContainer={true}>
         <Section>
-          <SnippetForm />
+          <SnippetForm
+            onValid={(data) => createSnippetMutation.mutate(data)}
+            loading={createSnippetMutation.isLoading}
+            disabled={createSnippetMutation.isLoading || createSnippetMutation.isSuccess}
+          />
         </Section>
       </MainLayout>
     </>

@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> & {
             <Transition.Root show={open} as={Fragment}>
                 <Dialog
                     as='div'
-                    className='fixed inset-0 z-10 overflow-y-auto'
+                    className='fixed inset-0 z-50 overflow-y-auto'
                     initialFocus={initialFocus}
                     onClose={setOpen}
                 >
@@ -35,7 +35,7 @@ const Modal: React.FC<ModalProps> & {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                         >
-                            <Dialog.Overlay className='fixed inset-0 bg-gray-900/75 transition-opacity' />
+                            <Dialog.Overlay className='fixed inset-0 bg-base-300/75 transition-opacity' />
                         </Transition.Child>
                         <span
                             className="hidden sm:inline-block sm:h-screen sm:align-middle"

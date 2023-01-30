@@ -1,64 +1,183 @@
 import { Tab } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type Snippet } from "@prisma/client";
 import clsx from "clsx";
 import { type NextPage } from "next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import UiIcons from "../assets/UiIcons";
 import Button from "../components/common/Button";
 import Section from "../components/common/Section";
 import StateWrapper from "../components/common/StateWrapper";
 import TextInput from "../components/common/TextInput";
 import MainLayout from "../components/layouts/MainLayout";
+import RemoveSnippetModal from "../components/RemoveSnippetModal";
 import { userSchemes, type UserProfileSchema } from "../server/api/schemes/schemes";
 import { api } from "../utils/api";
+import formatBytes from "../utils/formatBytes";
+import { formatDate } from "../utils/time";
+
+type Tab = typeof TABS[number]
+
+const TABS = [
+  'My snippets',
+  'Profile',
+  'Settings'
+] as const
 
 const Me: NextPage = () => {
-  const meQuery = api.user.getMe.useQuery()
+  const router = useRouter()
+
+  const utils = api.useContext()
+
+  const [open, setOpen] = useState(false)
+  const [snippetIdHelper, setSnippetIdHelper] = useState<Snippet['id'] | null>(null)
+
+  const onSuccessRemove = () => {
+    void utils.snippet.getMySnippets.invalidate()
+    setOpen(false)
+    setSnippetIdHelper(null)
+    if (window.location.pathname !== '/me?tab=My snippets') {
+      void router.push('/me?tab=My snippets')
+    }
+  }
+
+  const onErrorRemove = () => {
+    console.log('error')
+  }
+
+  const tab = useMemo(() => {
+    return router.query.tab as Tab
+  }, [router.query.tab])
+
+  const mySnippets = api.snippet.getMySnippets.useQuery(undefined, {
+    enabled: tab === 'My snippets'
+  })
+
+  const meQuery = api.user.getMe.useQuery(undefined, {
+    enabled: tab === 'Profile'
+  })
+
+  const changeTab = (tab: Tab) => {
+    void router.push({
+      pathname: '/me',
+      query: {
+        tab
+      },
+    },
+      undefined,
+      {
+        shallow: true
+      }
+    )
+  }
 
   return (
     <MainLayout useContainer={true}>
-      <StateWrapper
-        data={meQuery.data}
-        isLoading={meQuery.isLoading}
-        isError={meQuery.isError}
-        NonEmpty={(me) => <>
+      {snippetIdHelper ? <RemoveSnippetModal
+        openState={[open, setOpen]}
+        snippetId={snippetIdHelper}
+        onSuccess={onSuccessRemove}
+        onError={onErrorRemove}
+      /> : <></>}
+      <Tab.Group>
+        <Tab.List className='flex gap-5 justify-center'>
+          {TABS.map((tab, index) => (
+            <Tab
+              onClick={() => changeTab(tab)}
+              key={index}
+              className={({ selected }) => clsx(
+                'py-1.5 px-5 border-b w-fit border-transparent',
+                selected && '!border-primary text-primary'
+              )}
+            >
+              {tab}
+            </Tab>
+          ))}
+        </Tab.List>
+        <Tab.Panels>
           <Section>
-            <Tab.Group>
-              <Tab.List className='flex gap-5 justify-center'>
-                <Tab className={({ selected }) => clsx(
-                  'py-1.5 px-5 border-b w-fit border-transparent',
-                  selected && '!border-primary text-primary'
-                )}>Profile</Tab>
-                <Tab className={({ selected }) => clsx(
-                  'py-1.5 px-5 border-b w-fit border-transparent',
-                  selected && '!border-primary text-primary'
-                )}>Settings</Tab>
-              </Tab.List>
-              <Tab.Panels>
-                <Tab.Panel>
-                  <Section>
-                    <UserUpdateForm
-                      name={me.name}
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                      websiteUrl={me.websiteUrl}
-                      image={me.image}
-                    />
-                  </Section>
-                </Tab.Panel>
-                <Tab.Panel>
-                  <Section>
-                    <UserUpdateForm
-                      name={me.name}
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                      websiteUrl={me.websiteUrl}
-                      image={me.image}
-                    />
-                  </Section>
-                </Tab.Panel>
-              </Tab.Panels>
-            </Tab.Group>
+
+            {/* My snippets */}
+            <Tab.Panel>
+              <StateWrapper
+                data={mySnippets.data}
+                isLoading={mySnippets.isLoading}
+                isError={mySnippets.isError}
+                NonEmpty={(snippets) => <>
+                  <table className='z-40 table-auto border-collapse container mx-auto'>
+                    <thead>
+                      <tr className='[&>th]:text-start'>
+                        <th>Title</th>
+                        <th className='hide-when-not-md'>Created</th>
+                        <th className='hide-when-not-md'>Size</th>
+                        <th>Language</th>
+                        <th>State</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {snippets.map((snippet, index) => (<>
+                        <tr key={index} className='hover:bg-base-300/50'>
+                          <td className='text-primary hover:text-primary/70 break-all'>
+                            <Link href={`/snippets/${snippet.id}`}>
+                              {snippet.title}
+                            </Link>
+                          </td>
+                          <td className='hide-when-not-md'>{formatDate(snippet.createdAt)}</td>
+                          <td className='hide-when-not-md'>{formatBytes(snippet.size)}</td>
+                          <td>{snippet.language}</td>
+                          <td>{snippet.isPublic ? 'Public' : 'Private'}</td>
+                          <td>
+                            <Button
+                              size='xs'
+                              variant='ghost'
+                              onClick={() => void router.push(`/snippets/edit/${snippet.id}`)}
+                            >
+                              {UiIcons.pencilSquare}
+                            </Button>
+                            <Button
+                              size='xs'
+                              variant='danger'
+                              onClick={() => {
+                                setSnippetIdHelper(snippet.id)
+                                setOpen(true)
+                              }}
+                            >
+                              {UiIcons.trash}
+                            </Button>
+                          </td>
+                        </tr>
+                      </>
+                      ))}
+                    </tbody>
+                  </table>
+                </>}
+              />
+            </Tab.Panel>
+
+            {/* Profile  */}
+            <Tab.Panel>
+              <StateWrapper
+                data={meQuery.data}
+                isLoading={meQuery.isLoading}
+                isError={meQuery.isError}
+                NonEmpty={(me) => <>
+                  <UserUpdateForm
+                    name={me.name}
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    websiteUrl={me.websiteUrl}
+                    image={me.image}
+                  />
+                </>}
+              />
+            </Tab.Panel>
+
           </Section>
-        </>}
-      />
+        </Tab.Panels>
+
+      </Tab.Group>
     </MainLayout>
   )
 }

@@ -4,15 +4,19 @@ import Link from 'next/link'
 import SessionStateWrapper from '../common/SessionStateWrapper'
 import { Menu, Transition } from '@headlessui/react'
 import UiIcons from '../../assets/UiIcons'
-import { Fragment, useState } from 'react'
-import Button, { type ButtonContentProps, type ButtonProps } from '../common/Button'
+import { Fragment } from 'react'
+import Button from '../common/Button'
 import Image from 'next/image'
-import Modal from '../common/Modal'
 
 const navConfig = {
     links: [
         // { label: 'Add', link: '/' },
         { label: 'Snippets', link: '/snippets' },
+    ],
+    accountMenuLinks: [
+        { label: 'My snippets', link: '/me?tab=My snippets', icon: UiIcons.calendar },
+        { label: 'Profile', link: '/me?tab=Profile', icon: UiIcons.user },
+        { label: 'Settings', link: '/me?tab=Settings', icon: UiIcons.cog6Tooth },
     ]
 } as const
 
@@ -139,28 +143,19 @@ const AccountMenu: React.FC<{
                 >
                     <Menu.Items className="absolute overflow-hidden right-0 mt-2 w-48 min-w-fit origin-top-right rounded-md bg-neutral shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link
-                                        className='bg-neutral w-full hover:bg-base-100/80 py-1.5 px-3 flex items-center gap-3 justify-start text-white'
-                                        href='/me'
-                                    >
-                                        {UiIcons.user}
-                                        <span>Profile</span>
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link
-                                        className='bg-neutral hover:bg-base-100/80 w-full py-1.5 px-3 flex items-center gap-3 justify-start text-white'
-                                        href='/settings'
-                                    >
-                                        {UiIcons.cog6Tooth}
-                                        <span>Settings</span>
-                                    </Link>
-                                )}
-                            </Menu.Item>
+                            {navConfig.accountMenuLinks.map(({ label, link, icon }, index) => (
+                                <Menu.Item key={index}>
+                                    {({ active }) => (
+                                        <Link
+                                            className='bg-neutral w-full hover:bg-base-100/80 py-1.5 px-3 flex items-center gap-3 justify-start text-white'
+                                            href={link}
+                                        >
+                                            {icon}
+                                            <span>{label}</span>
+                                        </Link>
+                                    )}
+                                </Menu.Item>
+                            ))}
                         </div>
                         <div>
                             <Menu.Item>

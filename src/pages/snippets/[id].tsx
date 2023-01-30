@@ -17,33 +17,35 @@ const SnippetPage: NextPage = () => {
 
     return (
         <MainLayout useContainer={true}>
-            <Section>
-                <StateWrapper
-                    data={snippetQuery.data}
-                    isLoading={snippetQuery.isLoading}
-                    isError={snippetQuery.isError}
-                    Error={
-                        <div className='flex flex-col space-y-2 w-fit mx-auto'>
-                            <span>Sorry, we couldn&apos;t get the snippet.</span>
-                            <Button
-                                onClick={() => void snippetQuery.refetch()}
-                            >
-                                Try again
-                            </Button>
-                        </div>
-                    }
-                    NonEmpty={(snippet) =>
-                        <>
+            <StateWrapper
+                data={snippetQuery.data}
+                isLoading={snippetQuery.isLoading}
+                isError={snippetQuery.isError}
+                Error={
+                    <div className='flex flex-col space-y-2 w-fit mx-auto'>
+                        <span>Sorry, we couldn&apos;t get the snippet.</span>
+                        <Button
+                            onClick={() => void snippetQuery.refetch()}
+                        >
+                            Try again
+                        </Button>
+                    </div>
+                }
+                NonEmpty={(snippet) =>
+                    <>
+                        <Section>
                             <UserProfileInfo
                                 userProfile={snippet.user}
                             />
+                        </Section>
+                        <Section useSectionPadding={false}>
                             <Code
                                 snippet={snippet}
                             />
-                        </>
-                    }
-                />
-            </Section>
+                        </Section>
+                    </>
+                }
+            />
         </MainLayout>
     )
 }

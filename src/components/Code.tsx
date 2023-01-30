@@ -11,6 +11,11 @@ import Dot from './common/Dot'
 import { formatDate } from '../utils/time'
 import Modal from './common/Modal'
 import { useState } from 'react'
+import SessionStateWrapper from './common/SessionStateWrapper'
+import { useRouter } from 'next/router'
+import UiIcons from '../assets/UiIcons'
+import { api } from '../utils/api'
+import RemoveSnippetModal from './RemoveSnippetModal'
 
 interface CodeProps {
     snippet: Extract<NonNullable<SnippetRouterOutputs['getOneById']>, { content: string }>
@@ -21,6 +26,21 @@ const Code: React.FC<CodeProps> = ({
     snippet,
     className
 }) => {
+    const utils = api.useContext()
+
+    const [open, setOpen] = useState(false)
+    const router = useRouter()
+
+    const onSuccessRemove = () => {
+        void utils.snippet.getAllByUserIdPublic.invalidate()
+        setOpen(false)
+        router.back()
+    }
+
+    const onErrorRemove = () => {
+        console.log('error')
+    }
+
     const [, copy] = useCopyToClipboard()
 
     // copy a snippet to the clipboard
@@ -63,16 +83,26 @@ const Code: React.FC<CodeProps> = ({
         }
     }
 
+    const handleGoToEditPage = () => {
+        void router.push(`/snippets/edit/${snippet.id}`)
+    }
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     return (
         <div
             className={clsx(
-                'my-3',
+                'my-3 z-10',
                 className
             )}
         >
 
+            <RemoveSnippetModal
+                openState={[open, setOpen]}
+                snippetId={snippet.id}
+                onSuccess={onSuccessRemove}
+                onError={onErrorRemove}
+            />
             <Modal
                 openState={[isMobileMenuOpen, setIsMobileMenuOpen]}
             >
@@ -81,6 +111,17 @@ const Code: React.FC<CodeProps> = ({
                     <MenuButtonMobile text='raw' onClick={handleRaw} />
                     <MenuButtonMobile text='download' onClick={handleDownload} />
                     <MenuButtonMobile text='link' onClick={handleCopyLink} />
+                    <SessionStateWrapper
+                        Guest={() => <></>}
+                        Admin={(userData) => userData.id === snippet.user.id ? <>
+                            <MenuButtonMobile text='edit' onClick={handleGoToEditPage} />
+                            <MenuButtonMobile text='delete' onClick={() => setOpen(true)} />
+                        </> : <></>}
+                        User={(userData) => userData.id === snippet.user.id ? <>
+                            <MenuButtonMobile text='edit' onClick={handleGoToEditPage} />
+                            <MenuButtonMobile text='delete' onClick={() => setOpen(true)} />
+                        </> : <></>}
+                    />
                 </div>
             </Modal>
 
@@ -108,14 +149,26 @@ const Code: React.FC<CodeProps> = ({
                     <MenuButton onClick={handleDownload}>download</MenuButton>
                     <Dot />
                     <MenuButton onClick={handleCopyLink}>link</MenuButton>
+                    <SessionStateWrapper
+                        Guest={() => <></>}
+                        Admin={(userData) => userData.id === snippet.user.id ? <>
+                            <Dot />
+                            <MenuButton onClick={handleGoToEditPage}>{UiIcons.pencilSquare}</MenuButton>
+                            <Dot />
+                            <MenuButton onClick={() => setOpen(true)}>{UiIcons.trash}</MenuButton>
+                        </> : <></>}
+                        User={(userData) => userData.id === snippet.user.id ? <>
+                            <Dot />
+                            <MenuButton onClick={handleGoToEditPage}>{UiIcons.pencilSquare}</MenuButton>
+                            <Dot />
+                            <MenuButton onClick={() => setOpen(true)}>{UiIcons.trash}</MenuButton>
+                        </> : <></>}
+                    />
                 </div>
             </div>
             <SyntaxHighlighter
                 language={snippet.language}
                 showLineNumbers
-                lineNumberContainerStyle={{
-                    backgroundColor: 'hover:'
-                }}
                 lineNumberStyle={{
                     paddingRight: '8px',
                     paddingLeft: '4px',
@@ -124,7 +177,7 @@ const Code: React.FC<CodeProps> = ({
                     backgroundColor: colors.zinc['900']
                 }}
                 customStyle={{
-                    padding: '0'
+                    padding: '0',
                 }}
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 style={atomOneDark}
@@ -152,8 +205,8 @@ const MenuButton: React.FC<{
                 className='font-semibold'
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onClick={onClick}
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onTouchStart={onClick}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            // onTouchStart={onClick}
             >
                 {children}
             </Button>

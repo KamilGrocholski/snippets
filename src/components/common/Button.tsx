@@ -94,6 +94,7 @@ const BUTTON_VARIANT = {
     primary: 'text-white bg-primary hover:bg-primary/80 shadow-sm active:scale-95 active:shadow-lg',
     'primary-reversed': 'text-primary bg-neutral hover:bg-primary shadow-sm hover:text-neutral',
     ghost: 'text-white bg-transtapernt hover:bg-neutral',
+    danger: 'text-white bg-danger hover:bg-danger/80 shadow-sm active:scale-95 active:shadow-lg'
 } as const
 
 const BUTTON_SIZE = {
