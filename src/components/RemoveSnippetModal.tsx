@@ -1,6 +1,7 @@
 import { type Snippet } from "@prisma/client"
 import { api } from "../utils/api"
 import ConfirmationModal, { type ConfirmationModalProps } from "./common/ConfirmationModal"
+import useToastsController from "../hooks/useToastsController"
 
 interface Props extends Pick<ConfirmationModalProps, 'openState'> {
     snippetId: Snippet['id'],
@@ -14,11 +15,15 @@ const RemoveSnippetModal: React.FC<Props> = ({
     onError,
     openState
 }) => {
+    const { add } = useToastsController()
+
     const removeSnippetMutation = api.snippet.delete.useMutation({
         onSuccess: () => {
+            add('remove-snippet-success')
             onSuccess()
         },
         onError: () => {
+            add('remove-snippet-error')
             onError()
         }
     })

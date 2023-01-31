@@ -33,7 +33,7 @@ const SnippetPage: NextPage = () => {
                 }
                 NonEmpty={(snippet) =>
                     <>
-                        <Section>
+                        <Section useBgColor={false} useSectionPadding={false}>
                             <UserProfileInfo
                                 userProfile={snippet.user}
                             />

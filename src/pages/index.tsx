@@ -6,16 +6,22 @@ import SnippetForm from "../components/SnippetForm";
 import Section from "../components/common/Section";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
+import useToastsController from "../hooks/useToastsController";
 
 const Home: NextPage = () => {
 
   const utils = api.useContext()
   const router = useRouter()
+  const { add } = useToastsController()
 
   const createSnippetMutation = api.snippet.create.useMutation({
     onSuccess: (createdSnippet) => {
+      add('add-snippet-success')
       void router.push(`/snippets/${createdSnippet.id}`)
       void utils.snippet.infiniteSnippets.invalidate()
+    },
+    onError: () => {
+      add('add-snippet-error')
     }
   })
 

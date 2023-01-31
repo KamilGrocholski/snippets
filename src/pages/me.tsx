@@ -14,17 +14,18 @@ import StateWrapper from "../components/common/StateWrapper";
 import TextInput from "../components/common/TextInput";
 import MainLayout from "../components/layouts/MainLayout";
 import RemoveSnippetModal from "../components/RemoveSnippetModal";
+import useToastsController from "../hooks/useToastsController";
 import { userSchemes, type UserProfileSchema } from "../server/api/schemes/schemes";
 import { api } from "../utils/api";
 import formatBytes from "../utils/formatBytes";
 import { formatDate } from "../utils/time";
 
-type Tab = typeof TABS[number]
+export type Tab = typeof TABS[number]
 
 const TABS = [
   'My snippets',
   'Profile',
-  'Settings'
+  // 'Settings'
 ] as const
 
 const Me: NextPage = () => {
@@ -61,12 +62,13 @@ const Me: NextPage = () => {
   })
 
   const changeTab = (tab: Tab) => {
-    void router.push({
-      pathname: '/me',
-      query: {
-        tab
+    void router.push(
+      {
+        pathname: '/me',
+        query: {
+          tab
+        },
       },
-    },
       undefined,
       {
         shallow: true
@@ -195,11 +197,14 @@ const UserUpdateForm: React.FC<{
 }) => {
     const utils = api.useContext()
 
+    const { add } = useToastsController()
+
     const updateMeMutation = api.user.updateMe.useMutation({
-      onError: (error) => {
-        console.log({ error })
+      onError: () => {
+        add('update-profile-error')
       },
       onSuccess: () => {
+        add('update-profile-success')
         void utils.user.getMe.invalidate()
       }
     })

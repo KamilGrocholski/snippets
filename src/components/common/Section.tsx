@@ -22,14 +22,14 @@ const Section = forwardRef<HTMLDivElement, SectionProps>(({
             ref={ref}
             className={clsx(
                 'w-256 max-w-full mx-auto mb-0 rounded-md',
-                useBgColor && 'bg-neutral',
+                useBgColor && 'bg-base-200',
                 containerClassName
             )}
             {...props}
         >
             <section
                 className={clsx(
-                    useSectionPadding && 'p-4',
+                    useSectionPadding && 'p-3',
                     sectionClassName
                 )}
             >

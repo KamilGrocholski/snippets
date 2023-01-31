@@ -37,7 +37,7 @@ const SnippetsPage: NextPage = () => {
   return (
     <>
       <MainLayout useContainer={true}>
-        <Section useBgColor={false} useSectionPadding={false} containerClassName="sticky top-12" sectionClassName="py-4">
+        <Section useBgColor={false} useSectionPadding={false} containerClassName="bg-base-300 rounded-none sticky top-12" sectionClassName="pt-4 pb-2">
           <SnippetsFilter />
         </Section>
         <Section>
@@ -68,8 +68,13 @@ const SnippetsPage: NextPage = () => {
               </div>
             }
           />
-          <div ref={endRef} className='h-48'>
-            <div></div>
+          <div ref={endRef} className='h-12 mx-auto w-fit mt-2 px-3 py-3'>
+            <div>{
+              infiniteSnippets.data?.pages[0]?.snippets.length === 0 || infiniteSnippets.isFetching || infiniteSnippets.isLoading
+                ? '' :
+                !!infiniteSnippets.hasNextPage
+                  && infiniteSnippets.isFetching
+                  ? '' : 'No more snippets'}</div>
           </div>
         </Section>
       </MainLayout>

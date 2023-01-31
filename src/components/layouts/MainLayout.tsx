@@ -7,6 +7,9 @@ import UiIcons from '../../assets/UiIcons'
 import { Fragment } from 'react'
 import Button from '../common/Button'
 import Image from 'next/image'
+import { useRouter } from 'next/dist/client/router'
+import { type Tab } from '../../pages/me'
+import ToastContainer from '../common/Toasts'
 
 const navConfig = {
     links: [
@@ -14,7 +17,7 @@ const navConfig = {
         { label: 'Snippets', link: '/snippets' },
     ],
     accountMenuLinks: [
-        { label: 'My snippets', link: '/me?tab=My snippets', icon: UiIcons.calendar },
+        { label: 'My snippets', link: '/me?tab=My+snippets', icon: UiIcons.calendar },
         { label: 'Profile', link: '/me?tab=Profile', icon: UiIcons.user },
         { label: 'Settings', link: '/me?tab=Settings', icon: UiIcons.cog6Tooth },
     ]
@@ -31,7 +34,8 @@ const MainLayout: React.FC<{
         return (
             <>
 
-                <header className={clsx('lg:w-256 w-full mx-auto z-40 fixed top-0 left-0 bg-base-300 h-12 right-0 flex items-center justify-between py-0.5 sm:py-1 px-2 sm:px-4')}>
+                <header className={clsx('lg:w-256 lg:px-0 px-3 w-full mx-auto z-40 fixed top-0 left-0 bg-base-300 h-12 right-0 flex items-center justify-between py-0.5 sm:py-1')}>
+                    <ToastContainer />
                     <div>
                         <Link href='/' className='text-xl font-bold'>
                             Snippets
@@ -93,7 +97,7 @@ const MainLayout: React.FC<{
                         </div>
                     </div>
                     <div>
-                        <p>Copyright © 2023 - All right reserved by ACME Industries Ltd</p>
+                        <p>Copyright © 2023 - All right reserved by ABCDEFGHIJKL</p>
                     </div>
                 </footer>
             </>
@@ -124,6 +128,18 @@ const AccountMenu: React.FC<{
     image,
     role
 }) => {
+        const router = useRouter()
+        const changeTab = (tab: Tab) => {
+            void router.replace(
+                {
+                    pathname: '/me',
+                    query: {
+                        tab
+                    }
+                },
+                undefined
+            )
+        }
 
         return (
             <Menu as="div" className="relative inline-block text-left">
@@ -149,6 +165,7 @@ const AccountMenu: React.FC<{
                                         <Link
                                             className='bg-neutral w-full hover:bg-base-100/80 py-1.5 px-3 flex items-center gap-3 justify-start text-white'
                                             href={link}
+                                        // onClick={() => changeTab(label)}
                                         >
                                             {icon}
                                             <span>{label}</span>

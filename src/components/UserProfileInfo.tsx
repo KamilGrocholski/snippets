@@ -1,9 +1,7 @@
 import { type UserRouterOutputs } from "../server/api/routers/user"
-import SocialLinkButton from "./SocialLinkButton"
 import Image from "next/image"
 import React from "react"
 import UiIcons from "../assets/UiIcons"
-import Tooltip from "./common/Tooltip"
 import Link from "next/link"
 import { formatDate } from "../utils/time"
 

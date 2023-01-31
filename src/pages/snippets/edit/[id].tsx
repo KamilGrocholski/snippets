@@ -5,6 +5,7 @@ import Section from "../../../components/common/Section";
 import StateWrapper from "../../../components/common/StateWrapper";
 import MainLayout from "../../../components/layouts/MainLayout";
 import SnippetForm from "../../../components/SnippetForm";
+import useToastsController from "../../../hooks/useToastsController";
 import { api } from "../../../utils/api";
 
 
@@ -18,9 +19,15 @@ const EditSnippetPage: NextPage = () => {
 
     const utils = api.useContext()
 
+    const { add } = useToastsController()
+
     const updateSnippetMutation = api.snippet.updateById.useMutation({
         onSuccess: () => {
+            add('update-snippet-success')
             void utils.snippet.infiniteSnippets.invalidate()
+        },
+        onError: () => {
+            add('update-snippet-error')
         }
     })
 
