@@ -89,12 +89,6 @@ export const snippetRouter = createTRPCRouter({
                             name: true
                         }
                     },
-                    _count: {
-                        select: {
-                            likes: true,
-                            comments: true,
-                        }
-                    }
                 }
             })
             let nextCursor: typeof cursor | undefined = undefined;
@@ -155,7 +149,7 @@ export const snippetRouter = createTRPCRouter({
     create: protectedProcedure
         .input(snippetSchemes.create)
         .mutation(({ctx, input}) => {
-            const { title, content, language, isPublic, password } = input
+            const { title, content, language, isPublic } = input
 
             const size = getStringLengthInBytes(content) 
 
@@ -166,8 +160,7 @@ export const snippetRouter = createTRPCRouter({
                     userId: ctx.session.user.id,
                     isPublic,
                     language,
-                    size,
-                    password
+                    size
                 }
             })
         }),
@@ -175,7 +168,7 @@ export const snippetRouter = createTRPCRouter({
     updateById: snippetOwnerProcedure
         .input(snippetSchemes.update)
         .mutation(({ctx, input}) => {
-            const { snippetId, title, content, isPublic, language, password } = input
+            const { snippetId, title, content, isPublic, language } = input
 
             const size = getStringLengthInBytes(content)
 
@@ -188,8 +181,7 @@ export const snippetRouter = createTRPCRouter({
                     content,
                     language,
                     isPublic,
-                    size,
-                    password
+                    size
                 }
             })
         }),
@@ -214,12 +206,6 @@ const mainSnippetSelect = {
                     language: true,
                     size: true,
                     isPublic: true,
-                    _count: {
-                        select: {
-                            likes: true,
-                            comments: true
-                        }
-                    }
 }
 
 const userSelectForSnippet = {
@@ -234,7 +220,6 @@ const userSelectForSnippet = {
                             updatedAt: true,
                             _count: {
                                 select: {
-                                    comments: true,
                                     snippets: true
                                 }
                             }

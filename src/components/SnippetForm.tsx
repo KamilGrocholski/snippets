@@ -1,13 +1,11 @@
 import { type SubmitErrorHandler, type SubmitHandler, useForm, type FieldErrorsImpl, Controller } from "react-hook-form"
 import { type SnippetCreateSchema, snippetSchemes } from "../server/api/schemes/schemes"
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMemo, useState } from "react"
 import TextInput from "./common/TextInput"
 import Button from "./common/Button"
 import CheckboxInput from "./common/CheckboxInput"
 import Select from "./common/Select"
 import { type Language, LANGUAGES } from "../utils/constants"
-import generateRandomString from "../utils/generateRandomString"
 
 const SnippetForm = <
     V extends (data: SnippetCreateSchema) => void,
@@ -26,13 +24,10 @@ const SnippetForm = <
     initialData?: SnippetCreateSchema
 }) => {
 
-    const [withPassword, setWithPassword] = useState(false)
-
     const {
         register,
         control,
         handleSubmit,
-        setValue,
         formState: { errors }
     } = useForm<SnippetCreateSchema>({
         resolver: zodResolver(snippetSchemes.create),
@@ -42,15 +37,6 @@ const SnippetForm = <
         },
         shouldFocusError: false
     })
-
-    useMemo(() => {
-        if (withPassword) {
-            const newPassword = generateRandomString(10)
-            setValue('password', newPassword)
-            return
-        }
-        setValue('password', undefined)
-    }, [withPassword, setValue])
 
     const handleOnValid: SubmitHandler<SnippetCreateSchema> = (data, e) => {
         e?.preventDefault()
@@ -116,20 +102,6 @@ const SnippetForm = <
                 )}
 
             />
-            <CheckboxInput
-                label='Password'
-                checked={withPassword}
-                onChange={() => setWithPassword(prev => !prev)}
-            />
-
-            {withPassword ?
-                <TextInput
-                    placeholder='Password'
-                    sizeTotal="md"
-                    {...register('password')}
-                    errorMessage={errors.password?.message}
-                /> : null
-            }
 
             <Button
                 type='submit'

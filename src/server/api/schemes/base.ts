@@ -31,17 +31,5 @@ export const snippetBase = {
         .trim()  
         .max(100_000_000),
     isPublic: z.boolean(),
-    password: z.string()
-        .trim()
-        .max(555)
-        .optional(),
     language: z.string().trim()
-}
-
-export const commentBase = {
-    id: z.number(),
-    comment: z.string()
-        .trim()
-        .min(1)
-        .max(255)
 }

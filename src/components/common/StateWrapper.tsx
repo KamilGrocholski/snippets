@@ -36,5 +36,5 @@ const StateWrapper = <T,>({
 export default StateWrapper
 
 const DefaultLoading = <div className='w-fit mx-auto'><LoaderSpinner className='h-24 w-24 text-primary' /></div>
-const DefaultError = <div>Error</div>
-const DefaultEmpty = <div>Empty</div>
+const DefaultError = <div className='w-fit mx-auto'><div>Error</div></div>
+const DefaultEmpty = <div className='w-fit mx-auto'><div>Empty</div></div>

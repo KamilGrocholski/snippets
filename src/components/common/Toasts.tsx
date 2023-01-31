@@ -97,7 +97,7 @@ const Toast: React.FC<ToastProps> = ({
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
                 <div className={clsx(
-                    'w-full h-fit p-3 flex gap-2 items-start',
+                    'w-full h-fit p-3 flex gap-2 items-start rounded-md',
                     TOAST_VARIANT[variant]
                 )}>
                     <span>{ICON[variant]}</span>

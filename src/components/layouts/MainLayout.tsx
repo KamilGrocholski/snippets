@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/dist/client/router'
 import { type Tab } from '../../pages/me'
 import ToastContainer from '../common/Toasts'
+import DefaultAvatar from '../../assets/default_avatar.jpg'
 
 const navConfig = {
     links: [
@@ -19,7 +20,6 @@ const navConfig = {
     accountMenuLinks: [
         { label: 'My snippets', link: '/me?tab=My+snippets', icon: UiIcons.calendar },
         { label: 'Profile', link: '/me?tab=Profile', icon: UiIcons.user },
-        { label: 'Settings', link: '/me?tab=Settings', icon: UiIcons.cog6Tooth },
     ]
 } as const
 
@@ -64,10 +64,10 @@ const MainLayout: React.FC<{
                         <SessionStateWrapper
                             Guest={(signIn) => <button onClick={signIn}>Sign in</button>}
                             Admin={(session) => <>
-                                <AccountMenu image={session.image} role={session.role} />
+                                <AccountMenu image={session?.image} role={session.role} />
                             </>}
                             User={(session) => <>
-                                <AccountMenu image={session.image} role={session.role} />
+                                <AccountMenu image={session?.image} role={session.role} />
                             </>}
                         />
                     </div>
@@ -75,7 +75,7 @@ const MainLayout: React.FC<{
 
                 <main
                     className={clsx(
-                        'py-24',
+                        'py-24 lg:px-0 px-3',
                         useContainer && "container mx-auto min-h-screen"
                     )}>
                     {children}
@@ -84,10 +84,10 @@ const MainLayout: React.FC<{
 
                 <footer className='h-fit p-10 bg-base-200 flex flex-col [&>div]:mx-auto [&>div]:w-fit space-y-8'>
                     <div className="grid grid-flow-col gap-4">
-                        <a className="link link-hover">About us</a>
-                        <a className="link link-hover">Contact</a>
-                        <a className="link link-hover">Jobs</a>
-                        <a className="link link-hover">Press kit</a>
+                        <a>About us</a>
+                        <a>Contact</a>
+                        <a>Jobs</a>
+                        <a>Press kit</a>
                     </div>
                     <div>
                         <div className="grid grid-flow-col gap-4">
@@ -106,13 +106,14 @@ const MainLayout: React.FC<{
 
 export default MainLayout
 
-const Avatar: React.FC<{ image: string, className?: string }> = ({ image, className }) => {
+const Avatar: React.FC<{ image?: string, className?: string }> = ({ image, className }) => {
     return (
         <Image
-            src={image}
+            src={image ?? DefaultAvatar}
             alt='avatar'
             width={40}
             height={40}
+            priority={true}
             className={clsx(
                 'rounded-md',
                 className
@@ -122,7 +123,7 @@ const Avatar: React.FC<{ image: string, className?: string }> = ({ image, classN
 }
 
 const AccountMenu: React.FC<{
-    image: string
+    image?: string
     role: string
 }> = ({
     image,
@@ -144,7 +145,7 @@ const AccountMenu: React.FC<{
         return (
             <Menu as="div" className="relative inline-block text-left">
                 <div>
-                    <Menu.Button className="">
+                    <Menu.Button className="flex items-center">
                         <Avatar image={image} />
                     </Menu.Button>
                 </div>

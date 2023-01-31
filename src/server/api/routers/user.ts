@@ -27,11 +27,9 @@ export const userRouter = createTRPCRouter({
                     updatedAt: true,
                     _count: {
                         select: {
-                            comments: true,
                             snippets: true
                         }
                     },
-
                 }
             })
         }),
@@ -64,11 +62,11 @@ export const userRouter = createTRPCRouter({
             return ctx.prisma.user.update({
                 where: {
                     id: ctx.session.user.id
-                },
+                },  
                 data: {
                     name,
-                    image,
-                    websiteUrl
+                    image: image ? image : null,
+                    websiteUrl: websiteUrl ? websiteUrl : null
                 }
             })
         })

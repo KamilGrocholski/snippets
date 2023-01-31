@@ -18,7 +18,6 @@ export const snippetsFilter = z.object({
         .or(z.literal('Last day')),
     language: z.string()
         .trim()
-        .or(z.string().max(1))
         .transform(lang => !lang.length ? undefined : lang === 'All languages' ? undefined : lang)
         .optional(),
     search: z.string()
@@ -46,7 +45,6 @@ export const snippetSchemes = {
         title: snippetBase.title,
         content: snippetBase.content,
         isPublic: snippetBase.isPublic,
-        password: snippetBase.password,
         language: snippetBase.language,
     }),
     update: z.object({
@@ -55,7 +53,6 @@ export const snippetSchemes = {
         content: snippetBase.content,
         isPublic: snippetBase.isPublic,
         language: snippetBase.language,
-        password: snippetBase.password,
     }),
     delete: z.object({
         snippetId: snippetBase.id

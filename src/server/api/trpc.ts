@@ -69,6 +69,19 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 
 export const protectedProcedure = t.procedure.use(performanceMiddleware).use(enforceUserIsAuthed);
 
+const isAdmin = t.middleware(async ({ ctx, next }) => {
+  if (ctx.session?.user?.role !== 'ADMIN') {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  return next({
+    ctx: {
+      session : {...ctx.session, user: ctx.session.user}
+    },
+  });
+});
+
+export const adminProcedure = t.procedure.use(performanceMiddleware).use(isAdmin)
+
 export const snippetOwnerProcedure = protectedProcedure
     .input(z.object({
         snippetId: snippetBase.id
