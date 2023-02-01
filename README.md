@@ -1,28 +1,84 @@
-# Create T3 App
+<h1 align="center">
+  Code snippets app
+</h1>
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+### Table of content
 
-## What's next? How do I make an app with this?
+- [Things used to create it](#things-used-to-create-it)
+- [Basic features](#basic-features)
+- [How to run it locally](#how-to-run-it-locally)
+- [Screenshots](#screenshots)
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Things used to create it
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
+- [TypeScript](https://www.typescriptlang.org)
+- [NextJS](https://nextjs.org)
 - [tRPC](https://trpc.io)
+- [Zod](https://react-hook-form.com)
+- [Zod Resolver](https://github.com/react-hook-form/resolvers#Zod)
+- [React Hook Form](https://react-hook-form.com)
+- [Tailwind](https://tailwindcss.com)
+- [HeadlessUI](https://headlessui.com)
+- [Prisma](https://www.prisma.io)
+- [NextAuth](https://next-auth.js.org)
+- [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
 
-## Learn More
+## Basic features
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- Signing in with a google account
+- Adding a snippet
+- Removing a snippet
+- Updating a snippet
+- Checking snippets with syntax highlighting
+- Copy or download a snippet.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## How to run it locally
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+1. Clone the repository
 
-## How do I deploy this?
+```bash
+git clone https://github.com/KamilGrocholski/snippets.git
+```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+2. Install dependencies
+
+```bash
+cd food-recipes
+npm install
+```
+
+3. .env file
+
+```
+1. Rename the .env.example file to .env
+2. Set the required env variables inside
+```
+
+4. Prisma
+
+```bash
+npx prisma db push
+```
+
+5. Run the app
+
+```bash
+npm run dev
+```
+
+## Screenshots
+
+- Snippet view\
+  ![screenshot](https://github.com/KamilGrocholski/snippets/blob/main/images/snippet_view.png?raw=true)
+
+- Snippet creator\
+  ![screenshot](https://github.com/KamilGrocholski/snippets/blob/main/images/snippet_creator.png?raw=true)
+
+- List of snippets\
+  ![screenshot](https://github.com/KamilGrocholski/snippets/blob/main/images/snippets_list_view.png?raw=true)
+
+- User profile\
+  ![screenshot](https://github.com/KamilGrocholski/snippets/blob/main/images/user_profile_view.png?raw=true)
+
+- Logged in user's snippets\
+  ![screenshot](https://github.com/KamilGrocholski/snippets/blob/main/images/my_snippets_list_view.png?raw=true)

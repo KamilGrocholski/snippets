@@ -9,6 +9,8 @@ import Button from '../common/Button'
 import ToastContainer from '../common/Toasts'
 import DefaultAvatar from '../../assets/default_avatar.jpg'
 import ImageWithFallback from '../common/ImageWithFallback'
+import Logo from '../../assets/logo.png'
+import Image from 'next/image'
 
 const navConfig = {
     links: [
@@ -33,9 +35,13 @@ const MainLayout: React.FC<{
             <>
                 <ToastContainer />
                 <header className={clsx('lg:w-256 lg:px-0 px-3 w-full mx-auto z-40 fixed top-0 left-0 bg-base-300 h-12 right-0 flex items-center justify-between py-0.5 sm:py-1')}>
-                    <div>
+                    <div className='items-center'>
                         <Link href='/' className='text-xl font-bold'>
-                            Snippets
+                            <Image
+                                priority
+                                src={Logo}
+                                alt='Logo'
+                            />
                         </Link>
                     </div>
                     <div className='flex gap-5 items-center'>
