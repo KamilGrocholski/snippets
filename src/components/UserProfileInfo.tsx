@@ -1,10 +1,10 @@
 import { type UserRouterOutputs } from "../server/api/routers/user"
-import Image from "next/image"
 import React from "react"
 import UiIcons from "../assets/UiIcons"
 import Link from "next/link"
 import { formatDate } from "../utils/time"
 import DefaultAvatar from '../assets/default_avatar.jpg'
+import ImageWithFallback from "./common/ImageWithFallback"
 
 const UserProfileInfo: React.FC<{
     userProfile: NonNullable<UserRouterOutputs['getUserProfile']>
@@ -14,7 +14,8 @@ const UserProfileInfo: React.FC<{
         return (
             <div className='flex flex-row gap-5 items-start'>
                 <div className='mt-1.5'>
-                    <Image
+                    <ImageWithFallback
+                        fallbackSrc={DefaultAvatar}
                         src={userProfile.image ?? DefaultAvatar}
                         alt='avatar'
                         width={80}

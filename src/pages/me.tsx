@@ -50,15 +50,18 @@ const Me: NextPage = () => {
   }
 
   const tab = useMemo(() => {
-    return router.query.tab as Tab
+    return {
+      name: router.query.tab as Tab,
+      index: TABS.findIndex(tab => tab === router.query.tab as Tab)
+    }
   }, [router.query.tab])
 
   const mySnippets = api.snippet.getMySnippets.useQuery(undefined, {
-    enabled: tab === 'My snippets'
+    enabled: tab.name === 'My snippets'
   })
 
   const meQuery = api.user.getMe.useQuery(undefined, {
-    enabled: tab === 'Profile'
+    enabled: tab.name === 'Profile'
   })
 
   const changeTab = (tab: Tab) => {
@@ -84,7 +87,7 @@ const Me: NextPage = () => {
         onSuccess={onSuccessRemove}
         onError={onErrorRemove}
       /> : <></>}
-      <Tab.Group>
+      <Tab.Group selectedIndex={tab.index}>
         <Tab.List className='flex gap-5 justify-center'>
           {TABS.map((tab, index) => (
             <Tab

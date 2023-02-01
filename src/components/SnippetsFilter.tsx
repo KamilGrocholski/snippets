@@ -62,40 +62,46 @@ const SnippetsFilter: React.FC<{
         }
 
         return (
-            <form className='flex lg:flex-row flex-col items-center w-full gap-2'>
+            // <form className='flex lg:flex-row flex-col items-center w-full gap-2'>
+            <form className='lg:flex lg:flex-row grid grid- w-full gap-2'>
                 <TextInput
                     placeholder="Search…"
                     value={localFilter.search}
                     onChange={e => handleSetLocalFilter('search', e.target.value)}
                 />
-                <Select
-                    options={TIMES}
-                    extractKey={(option, index) => option + ' ' + index.toString()}
-                    extractValue={(option) => option}
-                    selected={localFilter.time}
-                    setSelected={(option) => handleSetLocalFilter('time', option)}
-                />
-                <Select
-                    options={LANGUAGES_FILTER}
-                    extractKey={(option, index) => option ?? NO_LANGUAGE_SELECTED + ' ' + index.toString()}
-                    extractValue={(option) => option ?? NO_LANGUAGE_SELECTED}
-                    selected={localFilter.language as Language}
-                    setSelected={(option) => handleSetLocalFilter('language', option)}
-                />
 
-                <Button
-                    type='submit'
-                    onClick={handleSearch}
-                >
-                    <span>Search</span>
-                </Button>
-                <Button
-                    type='reset'
-                    onClick={handleReset}
-                    variant='ghost'
-                >
-                    Reset
-                </Button>
+                <div className='flex gap-2'>
+                    <Select
+                        options={TIMES}
+                        extractKey={(option, index) => option + ' ' + index.toString()}
+                        extractValue={(option) => option}
+                        selected={localFilter.time}
+                        setSelected={(option) => handleSetLocalFilter('time', option)}
+                    />
+                    <Select
+                        options={LANGUAGES_FILTER}
+                        extractKey={(option, index) => option ?? NO_LANGUAGE_SELECTED + ' ' + index.toString()}
+                        extractValue={(option) => option ?? NO_LANGUAGE_SELECTED}
+                        selected={localFilter.language as Language}
+                        setSelected={(option) => handleSetLocalFilter('language', option)}
+                    />
+                </div>
+
+                <div className='flex gap-2'>
+                    <Button
+                        type='submit'
+                        onClick={handleSearch}
+                    >
+                        <span>Search</span>
+                    </Button>
+                    <Button
+                        type='reset'
+                        onClick={handleReset}
+                        variant='ghost'
+                    >
+                        Reset
+                    </Button>
+                </div>
             </form>
         )
     }

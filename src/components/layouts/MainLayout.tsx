@@ -6,11 +6,9 @@ import { Menu, Transition } from '@headlessui/react'
 import UiIcons from '../../assets/UiIcons'
 import { Fragment } from 'react'
 import Button from '../common/Button'
-import Image from 'next/image'
-import { useRouter } from 'next/dist/client/router'
-import { type Tab } from '../../pages/me'
 import ToastContainer from '../common/Toasts'
 import DefaultAvatar from '../../assets/default_avatar.jpg'
+import ImageWithFallback from '../common/ImageWithFallback'
 
 const navConfig = {
     links: [
@@ -33,9 +31,8 @@ const MainLayout: React.FC<{
 
         return (
             <>
-
+                <ToastContainer />
                 <header className={clsx('lg:w-256 lg:px-0 px-3 w-full mx-auto z-40 fixed top-0 left-0 bg-base-300 h-12 right-0 flex items-center justify-between py-0.5 sm:py-1')}>
-                    <ToastContainer />
                     <div>
                         <Link href='/' className='text-xl font-bold'>
                             Snippets
@@ -64,10 +61,10 @@ const MainLayout: React.FC<{
                         <SessionStateWrapper
                             Guest={(signIn) => <button onClick={signIn}>Sign in</button>}
                             Admin={(session) => <>
-                                <AccountMenu image={session?.image} role={session.role} />
+                                <AccountMenu image={session?.image} />
                             </>}
                             User={(session) => <>
-                                <AccountMenu image={session?.image} role={session.role} />
+                                <AccountMenu image={session?.image} />
                             </>}
                         />
                     </div>
@@ -108,7 +105,8 @@ export default MainLayout
 
 const Avatar: React.FC<{ image?: string, className?: string }> = ({ image, className }) => {
     return (
-        <Image
+        <ImageWithFallback
+            fallbackSrc={DefaultAvatar}
             src={image ?? DefaultAvatar}
             alt='avatar'
             width={40}
@@ -124,23 +122,9 @@ const Avatar: React.FC<{ image?: string, className?: string }> = ({ image, class
 
 const AccountMenu: React.FC<{
     image?: string
-    role: string
 }> = ({
     image,
-    role
 }) => {
-        const router = useRouter()
-        const changeTab = (tab: Tab) => {
-            void router.replace(
-                {
-                    pathname: '/me',
-                    query: {
-                        tab
-                    }
-                },
-                undefined
-            )
-        }
 
         return (
             <Menu as="div" className="relative inline-block text-left">
@@ -162,30 +146,25 @@ const AccountMenu: React.FC<{
                         <div>
                             {navConfig.accountMenuLinks.map(({ label, link, icon }, index) => (
                                 <Menu.Item key={index}>
-                                    {({ active }) => (
-                                        <Link
-                                            className='bg-neutral w-full hover:bg-base-100/80 py-1.5 px-3 flex items-center gap-3 justify-start text-white'
-                                            href={link}
-                                        // onClick={() => changeTab(label)}
-                                        >
-                                            {icon}
-                                            <span>{label}</span>
-                                        </Link>
-                                    )}
+                                    <Link
+                                        className='bg-neutral w-full hover:bg-base-100/80 py-1.5 px-3 flex items-center gap-3 justify-start text-white'
+                                        href={link}
+                                    >
+                                        {icon}
+                                        <span>{label}</span>
+                                    </Link>
                                 </Menu.Item>
                             ))}
                         </div>
                         <div>
                             <Menu.Item>
-                                {({ active }) => (
-                                    <button
-                                        className='bg-primary hover:bg-primary/80 w-full py-1.5 px-3 flex items-center gap-3 justify-start text-neutral'
-                                        onClick={() => void signOut()}
-                                    >
-                                        {UiIcons.power}
-                                        <span>Sign out</span>
-                                    </button>
-                                )}
+                                <button
+                                    className='bg-primary hover:bg-primary/80 w-full py-1.5 px-3 flex items-center gap-3 justify-start text-neutral'
+                                    onClick={() => void signOut()}
+                                >
+                                    {UiIcons.power}
+                                    <span>Sign out</span>
+                                </button>
                             </Menu.Item>
                         </div>
                     </Menu.Items>
