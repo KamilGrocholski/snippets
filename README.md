@@ -43,7 +43,7 @@ git clone https://github.com/KamilGrocholski/snippets.git
 2. Install dependencies
 
 ```bash
-cd food-recipes
+cd snippets
 npm install
 ```
 
